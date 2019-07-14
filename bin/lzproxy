@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+const lzproxy = require('..')
+const argv = require('../src/cli')
+
+lzproxy(argv)

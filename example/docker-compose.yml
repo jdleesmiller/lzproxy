@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  search:
+    build:
+      context: ..
+      dockerfile: example/search/Dockerfile
+    depends_on:
+      - postgres
+    command: node_modules/.bin/lzproxy npm start
+    environment:
+      PORT: 8080
+    ports:
+      - '4000:8080'
+    volumes:
+      - ..:/opt/lzproxy
+      - search_lzproxy_node_modules:/opt/lzproxy/node_modules
+      - search_node_modules:/opt/lzproxy/example/search/node_modules
+
+  tasks:
+    build:
+      context: ..
+      dockerfile: example/tasks/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      PORT: 8080
+    ports:
+      - '5000:8080'
+    volumes:
+      - ..:/opt/lzproxy
+      - tasks_lzproxy_node_modules:/opt/lzproxy/node_modules
+      - tasks_node_modules:/opt/lzproxy/example/tasks/node_modules
+    # command: node_modules/.bin/lzproxy npm start
+
+  todo:
+    build: todo
+    depends_on:
+      - search
+      - tasks
+    environment:
+      PORT: 8080
+    ports:
+      - '3000:8080'
+    volumes:
+      - ./todo:/opt/todo
+      - todo_node_modules:/opt/todo/node_modules
+
+  postgres:
+    image: postgres
+
+volumes:
+  todo_node_modules:
+  tasks_lzproxy_node_modules:
+  tasks_node_modules:
+  search_lzproxy_node_modules:
+  search_node_modules:

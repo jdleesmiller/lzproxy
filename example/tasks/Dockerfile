@@ -1,11 +1,13 @@
 FROM node:10.16.0
 
 WORKDIR /opt/lzproxy
-COPY . .
+COPY lzproxy .
+
+WORKDIR /opt/tasks
+COPY example/tasks/package.json example/tasks/package-lock.json ./
 RUN npm install
 
-WORKDIR /opt/lzproxy/example/tasks
-RUN npm install
+COPY example/tasks .
 
 USER node
 

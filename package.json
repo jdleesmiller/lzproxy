@@ -1,13 +1,8 @@
 {
-  "name": "lzproxy",
+  "name": "lzproxy-dev",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "get-port": "^5.0.0",
-    "http-proxy": "^1.17.0",
-    "yargs": "^13.2.4"
-  },
+  "description": "Development tooling for lzproxy.",
+  "dependencies": {},
   "devDependencies": {
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
@@ -18,15 +13,10 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-standard": "^4.0.0",
-    "express": "^4.17.1",
-    "mocha": "^6.1.4",
     "prettier": "^1.18.2"
   },
-  "bin": "bin/lzproxy",
-  "scripts": {
-    "test": "mocha"
-  },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "John Lees-Miller",
+  "license": "ISC",
+  "private": true
 }

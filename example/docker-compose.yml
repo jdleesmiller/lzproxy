@@ -13,9 +13,10 @@ services:
     ports:
       - '4000:8080'
     volumes:
-      - ..:/opt/lzproxy
+      - ../lzproxy:/opt/lzproxy
+      - ./search:/opt/search
       - search_lzproxy_node_modules:/opt/lzproxy/node_modules
-      - search_node_modules:/opt/lzproxy/example/search/node_modules
+      - search_node_modules:/opt/search/node_modules
 
   tasks:
     build:
@@ -28,9 +29,10 @@ services:
     ports:
       - '5000:8080'
     volumes:
-      - ..:/opt/lzproxy
+      - ../lzproxy:/opt/lzproxy
+      - ./tasks:/opt/tasks
       - tasks_lzproxy_node_modules:/opt/lzproxy/node_modules
-      - tasks_node_modules:/opt/lzproxy/example/tasks/node_modules
+      - tasks_node_modules:/opt/tasks/node_modules
     # command: node_modules/.bin/lzproxy npm start
 
   todo:

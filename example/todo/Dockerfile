@@ -1,8 +1,10 @@
 FROM node:10.16.0
 
 WORKDIR /opt/todo
-COPY . .
+COPY package.json package-lock.json ./
 RUN npm install
+
+COPY . .
 
 USER node
 

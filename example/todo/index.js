@@ -35,7 +35,7 @@ app.get('/api/tasks', (req, res) => {
   apiProxy.web(req, res, { target })
 })
 
-app.all('/api/tasks', (req, res) => {
+app.all('/api/tasks*', (req, res) => {
   apiProxy.web(req, res, { target: TASKS_TARGET })
 })
 

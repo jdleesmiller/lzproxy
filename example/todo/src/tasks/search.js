@@ -3,13 +3,12 @@ import React from 'react'
 import TASK_STORE from './task_store'
 
 const Search = () => {
-  const textRef = React.createRef()
+  const queryRef = React.createRef()
 
   return (
     <form
       onSubmit={e => {
-        console.log(textRef.current.value)
-        TASK_STORE.search(textRef.current.value)
+        TASK_STORE.search(queryRef.current.value)
         e.preventDefault()
       }}
     >
@@ -18,7 +17,7 @@ const Search = () => {
           type="text"
           className="form-control"
           aria-label="Search"
-          ref={textRef}
+          ref={queryRef}
         />
         <div className="input-group-append">
           <button className="btn btn-primary" type="submit">

@@ -15,10 +15,10 @@ const TaskList = () => {
   if (tasks) {
     taskList = (
       <ul className="list-group">
-        {tasks.map(({ id, text }) => (
-          <Task id={id} text={text} key={id} />
+        {tasks.map(({ id, description }) => (
+          <Task id={id} description={description} key={id} />
         ))}
-        <Task id={null} text={''} />
+        <Task id={null} description={''} />
       </ul>
     )
   } else {

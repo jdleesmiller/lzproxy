@@ -1,10 +1,24 @@
 const express = require('express')
 const app = express()
 
-const port = parseInt(process.env.PORT)
-if (!port) throw new Error('no port given')
+const { Task } = require('storage')
 
 app.get('/status', (req, res) => res.sendStatus(200))
-app.get('/', (req, res) => res.json({ widgets: [] }))
 
+app.get('/api/tasks', async (req, res, next) => {
+  try {
+    const tasks = await Task.query()
+      .whereRaw(
+        'to_tsvector(tasks.description) @@ plainto_tsquery(?)',
+        req.query.q || ''
+      )
+      .orderBy('id')
+    res.json({ tasks })
+  } catch (error) {
+    next(error)
+  }
+})
+
+const port = parseInt(process.env.PORT)
+if (!port) throw new Error('no port given')
 app.listen(port, () => console.log(`Listening on port ${port}`))

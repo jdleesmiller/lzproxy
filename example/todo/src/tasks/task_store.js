@@ -23,35 +23,40 @@ class TaskStore {
     await this.list()
   }
 
-  async create(_id, text) {
+  async create(description) {
     const response = await fetch(TASKS_API_ROOT, {
       method: 'POST',
       headers: this._jsonHeaders(),
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ description })
     })
-    if (!response.ok) throw new Error('failed to create')
-    await response.json() // ignore
+    if (!response.ok) {
+      await this._handleValidationError(response)
+      throw new Error('failed to create')
+    }
     await this.list()
   }
 
-  async update(id, text) {
+  async update(id, description) {
     const response = await fetch(this._itemUrl(id), {
-      method: 'PATCH',
+      method: 'PUT',
       headers: this._jsonHeaders(),
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ description })
     })
-    if (!response.ok) throw new Error(`failed to update ${id}`)
-    await response.json() // ignore
+    if (!response.ok) {
+      await this._handleValidationError(response)
+      throw new Error(`failed to update ${id}`)
+    }
+    await response.text() // ignore
     await this.list()
   }
 
-  async complete(id, _text) {
+  async complete(id) {
     const response = await fetch(this._itemUrl(id), {
       method: 'DELETE',
       headers: this._jsonHeaders()
     })
     if (!response.ok) throw new Error(`failed to complete ${id}`)
-    await response.json() // ignore
+    await response.text() // ignore
     await this.list()
   }
 
@@ -67,13 +72,20 @@ class TaskStore {
 
   _itemUrl(id) {
     if (!id) throw new Error(`bad id: ${id}`)
-    return new URL(id.toString(), this._rootUrl().toString())
+    return new URL(id.toString(), `${this._rootUrl()}/`)
   }
 
   _jsonHeaders() {
     return {
       Accept: 'application/json',
       'Content-Type': 'application/json'
+    }
+  }
+
+  async _handleValidationError(response) {
+    if (response.status === 400) {
+      const body = await response.json()
+      throw new Error(body.error.message)
     }
   }
 }

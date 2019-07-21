@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import TASK_STORE from './task_store'
 
@@ -18,36 +18,69 @@ const ACTION_CLASSES = {
 
 const delay = ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 
-const Task = ({ id, text }) => {
-  const [editing, setEditing] = useState(false)
-  const [working, setWorking] = useState(false)
+const Task = ({ id, description }) => {
+  const descriptionRef = React.createRef()
+  const [submitting, setSubmitting] = useState(false)
+  const [refocusNeeded, setRefocusNeeded] = useState(false)
+  const [currentDescription, setCurrentDescription] = useState(description)
 
   let action
   if (!id) {
     action = 'create'
-  } else if (editing) {
+  } else if (currentDescription !== description) {
     action = 'update'
   } else {
     action = 'complete'
   }
 
-  async function doAction() {
-    setWorking(true)
-    try {
-      await delay(1000)
-      await TASK_STORE[action](id, text)
-    } catch (err) {
-      alert(err.message)
-    } finally {
-      setWorking(false)
+  useEffect(() => {
+    // If the user updates the description so that it no longer matches the
+    // current search, this component will be unmounted while the update is
+    // still running; we use a cleanup function to detect this, in order to
+    // avoid calling setState after being unmounted.
+    let unmounted = false
+
+    async function update() {
+      try {
+        await delay(100)
+        if (action === 'create') {
+          await TASK_STORE.create(currentDescription)
+          if (!unmounted) {
+            setCurrentDescription('')
+            setRefocusNeeded(true)
+          }
+        } else if (action === 'update') {
+          await TASK_STORE.update(id, currentDescription)
+          if (!unmounted) setRefocusNeeded(true)
+        } else if (action === 'complete') {
+          await TASK_STORE.complete(id)
+        }
+      } catch (err) {
+        alert(err.message)
+      } finally {
+        if (!unmounted) setSubmitting(false)
+      }
     }
-  }
+    if (submitting) update()
+
+    return () => {
+      unmounted = true
+    }
+  }, [submitting])
+
+  // Refocus the input after a create or update completes.
+  useEffect(() => {
+    if (refocusNeeded && !descriptionRef.current.disabled) {
+      descriptionRef.current.focus()
+      setRefocusNeeded(false)
+    }
+  }, [refocusNeeded, submitting])
 
   return (
     <li className="list-group-item">
       <form
         onSubmit={e => {
-          doAction()
+          setSubmitting(true)
           e.preventDefault()
         }}
       >
@@ -55,17 +88,17 @@ const Task = ({ id, text }) => {
           <input
             type="text"
             className="form-control"
-            defaultValue={text}
-            onFocus={() => setEditing(true)}
-            onBlur={() => setEditing(false)}
-            disabled={working}
+            ref={descriptionRef}
+            value={currentDescription}
+            disabled={submitting}
+            onChange={() => setCurrentDescription(descriptionRef.current.value)}
           />
           <div className="input-group-append">
             <button
               className={classNames('btn', ACTION_CLASSES[action])}
               type="submit"
               style={{ minWidth: '3em' }}
-              disabled={working}
+              disabled={submitting}
               aria-label={action}
             >
               {ACTION_ICONS[action]}
@@ -79,7 +112,7 @@ const Task = ({ id, text }) => {
 
 Task.propTypes = {
   id: PropTypes.number,
-  text: PropTypes.string
+  description: PropTypes.string
 }
 
 export default Task

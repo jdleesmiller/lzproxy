@@ -2,5 +2,16 @@
 
 const lzproxy = require('..')
 const argv = require('../src/cli')
+const config = require('../src/config')
 
-lzproxy(argv)
+const proxyConfigs = config.read(argv.config)
+const proxies = lzproxy.start(proxyConfigs)
+
+process.on('SIGINT', stopProxies)
+process.on('SIGTERM', stopProxies)
+
+async function stopProxies() {
+  for (const proxy of proxies) {
+    await proxy.stop()
+  }
+}

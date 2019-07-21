@@ -7,8 +7,7 @@ services:
       dockerfile: example/search/Dockerfile
     depends_on:
       - postgres
-    command: npm run dev
-    # command: node_modules/.bin/lzproxy npm start
+    command: npx lzproxy npm run dev
     environment:
       PORT: 8080
     ports:
@@ -38,8 +37,7 @@ services:
       - tasks_lzproxy_node_modules:/opt/lzproxy/node_modules
       - tasks_storage_node_modules:/opt/storage/node_modules
       - tasks_node_modules:/opt/tasks/node_modules
-    command: npm run dev
-    # command: node_modules/.bin/lzproxy npm start
+    command: npx lzproxy npm start
 
   todo:
     build: todo

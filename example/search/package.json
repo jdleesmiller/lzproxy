@@ -18,5 +18,18 @@
   "devDependencies": {
     "lzproxy": "file:../lzproxy",
     "nodemon": "^1.19.1"
+  },
+  "lzproxy": {
+    "options": {
+      "livenessProbePath": "/status"
+    },
+    "proxies": [
+      {
+        "command": ["npm", "run", "dev"]
+      }, {
+        "port": 18080,
+        "environment": {"NODE_ENV": "test"}
+      }
+    ]
   }
 }

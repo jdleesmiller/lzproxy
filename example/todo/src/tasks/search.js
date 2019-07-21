@@ -16,7 +16,7 @@ const Search = () => {
         <input
           type="text"
           className="form-control"
-          aria-label="Search"
+          aria-label="description to search for"
           ref={queryRef}
         />
         <div className="input-group-append">

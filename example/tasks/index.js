@@ -35,22 +35,6 @@ app.post('/api/tasks', async (req, res, next) => {
   }
 })
 
-app.put('/api/tasks/:id', async (req, res, next) => {
-  try {
-    await Task.query()
-      .findById(req.params.id)
-      .patch({
-        description: req.body.description
-      })
-    res.sendStatus(204)
-  } catch (error) {
-    if (error instanceof Task.ValidationError) {
-      res.status(400).json({ error: { message: error.message } })
-    }
-    next(error)
-  }
-})
-
 app.delete('/api/tasks/:id', async (req, res, next) => {
   try {
     await Task.query().deleteById(req.params.id)

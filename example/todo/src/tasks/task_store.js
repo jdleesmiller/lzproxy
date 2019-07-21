@@ -36,20 +36,6 @@ class TaskStore {
     await this.list()
   }
 
-  async update(id, description) {
-    const response = await fetch(this._itemUrl(id), {
-      method: 'PUT',
-      headers: this._jsonHeaders(),
-      body: JSON.stringify({ description })
-    })
-    if (!response.ok) {
-      await this._handleValidationError(response)
-      throw new Error(`failed to update ${id}`)
-    }
-    await response.text() // ignore
-    await this.list()
-  }
-
   async complete(id) {
     const response = await fetch(this._itemUrl(id), {
       method: 'DELETE',

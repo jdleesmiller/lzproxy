@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import NewTask from './new_task'
 import Search from './search'
 import Task from './task'
 import TASK_STORE from './task_store'
@@ -15,10 +16,10 @@ const TaskList = () => {
   if (tasks) {
     taskList = (
       <ul className="list-group">
+        <NewTask />
         {tasks.map(({ id, description }) => (
           <Task id={id} description={description} key={id} />
         ))}
-        <Task id={null} description={''} />
       </ul>
     )
   } else {

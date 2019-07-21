@@ -16,7 +16,7 @@ const Index = () => {
     <div className="container">
       <div className="row">
         <div className="col">
-          <h1 className="mt-5 mb-3 text-center">TODO</h1>
+          <h1 className="mt-5 mb-3 text-center">TO DO</h1>
         </div>
       </div>
       <TaskList />

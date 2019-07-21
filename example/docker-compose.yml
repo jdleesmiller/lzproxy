@@ -52,12 +52,14 @@ services:
       - '3000:8080'
     volumes:
       - ./todo:/opt/todo
+      - todo_dist:/opt/todo/dist
       - todo_node_modules:/opt/todo/node_modules
 
   postgres:
     image: postgres
 
 volumes:
+  todo_dist:
   todo_node_modules:
   tasks_lzproxy_node_modules:
   tasks_storage_node_modules:

@@ -1,14 +1,13 @@
 {
   "name": "search",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "lzproxy example app: TODO - search service",
+  "private": true,
   "scripts": {
-    "start": "node index.js",
     "test": "NODE_ENV=test mocha"
   },
   "keywords": [],
-  "author": "",
+  "author": "John Lees-Miller",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
@@ -22,9 +21,7 @@
   },
   "lzproxy": {
     "options": {
-      "command": [
-        "nodemon"
-      ],
+      "command": [ "nodemon", "server.js" ],
       "livenessProbePath": "/status"
     },
     "proxies": [

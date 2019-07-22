@@ -1,15 +1,14 @@
 {
   "name": "search",
   "version": "1.0.0",
-  "description": "",
+  "description": "lzproxy example app: TODO - main web service",
   "private": true,
   "scripts": {
-    "start": "node index.js",
     "build": "NODE_ENV=production webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "John Lees-Miller",
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.3.1",

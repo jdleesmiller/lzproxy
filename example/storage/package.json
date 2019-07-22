@@ -1,13 +1,14 @@
 {
   "name": "storage",
   "version": "1.0.0",
-  "description": "",
+  "description": "lzproxy example app: TODO - shared storage library",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "John Lees-Miller",
   "license": "ISC",
   "dependencies": {
     "knex": "^0.19.0",

@@ -1,10 +1,9 @@
-const knex = require('knex')
 const { Model } = require('objection')
 
 const knexfile = require('./knexfile')
+const knex = require('knex')(knexfile[process.env.NODE_ENV || 'development'])
 
-// const nodeEnv = process.env.NODE_ENV || 'development'
-Model.knex(knex(knexfile))
+Model.knex(knex)
 
 class Task extends Model {
   static get tableName() {
@@ -24,4 +23,5 @@ class Task extends Model {
   }
 }
 
+exports.knex = knex
 exports.Task = Task

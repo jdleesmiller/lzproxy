@@ -5,9 +5,9 @@ services:
     build:
       context: ..
       dockerfile: example/search/Dockerfile
+    command: npx lzproxy
     depends_on:
       - postgres
-    command: npx lzproxy npm run dev
     environment:
       PORT: 8080
     ports:
@@ -24,6 +24,7 @@ services:
     build:
       context: ..
       dockerfile: example/tasks/Dockerfile
+    command: npx lzproxy
     depends_on:
       - postgres
     environment:
@@ -37,7 +38,6 @@ services:
       - tasks_lzproxy_node_modules:/opt/lzproxy/node_modules
       - tasks_storage_node_modules:/opt/storage/node_modules
       - tasks_node_modules:/opt/tasks/node_modules
-    command: npx lzproxy npm start
 
   todo:
     build: todo

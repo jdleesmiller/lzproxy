@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha"
   },
   "keywords": [],
   "author": "",
@@ -17,18 +16,24 @@
   },
   "devDependencies": {
     "lzproxy": "file:../lzproxy",
+    "mocha": "^6.2.0",
+    "node-fetch": "^2.6.0",
     "nodemon": "^1.19.1"
   },
   "lzproxy": {
     "options": {
+      "command": [
+        "nodemon"
+      ],
       "livenessProbePath": "/status"
     },
     "proxies": [
+      {},
       {
-        "command": ["npm", "run", "dev"]
-      }, {
         "port": 18080,
-        "environment": {"NODE_ENV": "test"}
+        "environment": {
+          "NODE_ENV": "test"
+        }
       }
     ]
   }

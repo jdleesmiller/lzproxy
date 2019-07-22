@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+async function createDatabases() {
+  const knex = require('knex')({
+    client: 'postgresql',
+    connection: 'postgres://postgres:postgres@postgres'
+  })
+  await knex.raw('CREATE DATABASE development')
+  await knex.raw('CREATE DATABASE test')
+  await knex.destroy()
+}
+
+createDatabases()

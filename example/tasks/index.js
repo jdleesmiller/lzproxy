@@ -11,10 +11,7 @@ app.get('/status', (req, res) => res.sendStatus(200))
 
 app.get('/api/tasks', async (req, res, next) => {
   try {
-    // TODO move to search service
-    const tasks = await Task.query()
-      // .whereRaw('to_tsvector(tasks.description) @@ plainto_tsquery(?)', 'foo')
-      .orderBy('id')
+    const tasks = await Task.query().orderBy('id')
     res.json({ tasks })
   } catch (error) {
     next(error)

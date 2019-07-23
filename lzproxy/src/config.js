@@ -18,10 +18,10 @@ function normalize(configData) {
     command: ['npm', 'start'],
     environment: {},
     host: '127.0.0.1',
-    livenessMaxTries: 20,
-    livenessProbePath: '/',
-    livenessRetryDelayMs: 1000,
-    livenessTimeoutMs: 2000,
+    readinessMaxTries: 20,
+    readinessProbePath: '/',
+    readinessRetryDelayMs: 1000,
+    readinessTimeoutMs: 2000,
     port: parseInt(process.env.PORT, 10) || 0,
     targetPortEnvironmentVariable: 'PORT'
   }

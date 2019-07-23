@@ -4,7 +4,7 @@ const httpProxy = require('http-proxy')
 const { spawn } = require('child_process')
 const getPort = require('get-port')
 
-const liveness = require('./liveness')
+const readiness = require('./readiness')
 
 class Proxy {
   constructor(config) {
@@ -36,16 +36,16 @@ class Proxy {
     return this._stopTarget()
   }
 
-  async waitForTargetLivenessProbe() {
-    await liveness.waitFor(this.getLivenessProbeUrl(), {
-      maxTries: this.config.livenessMaxTries,
-      retryDelayMs: this.config.livenessRetryDelayMs,
-      timeoutMs: this.config.livenessTimeoutMs
+  async waitForTargetReadinessProbe() {
+    await readiness.waitFor(this.getReadinessProbeUrl(), {
+      maxTries: this.config.readinessMaxTries,
+      retryDelayMs: this.config.readinessRetryDelayMs,
+      timeoutMs: this.config.readinessTimeoutMs
     })
   }
 
-  getLivenessProbeUrl() {
-    return new URL(this.config.livenessProbePath, this._getTarget())
+  getReadinessProbeUrl() {
+    return new URL(this.config.readinessProbePath, this._getTarget())
   }
 
   async _handleProxyRequest(req, res) {
@@ -92,7 +92,7 @@ class Proxy {
       })
     })
 
-    await this.waitForTargetLivenessProbe()
+    await this.waitForTargetReadinessProbe()
 
     console.log('target is live')
   }

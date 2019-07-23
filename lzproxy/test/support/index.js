@@ -18,8 +18,8 @@ function startWithDiagnosticTarget(lzproxyConfig = {}) {
       lzproxy: {
         options: {
           command: ['node', targetPaths.diagnostic],
-          livenessProbePath: '/status',
-          livenessRetryDelayMs: 100,
+          readinessProbePath: '/status',
+          readinessRetryDelayMs: 100,
           port: 8080
         },
         ...lzproxyConfig

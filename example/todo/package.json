@@ -41,7 +41,7 @@
   "lzproxy": {
     "options": {
       "command": ["node", "server.js"],
-      "livenessProbePath": "/status"
+      "readinessProbePath": "/status"
     },
     "proxies": [
       {

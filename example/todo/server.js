@@ -3,13 +3,18 @@ const httpProxy = require('http-proxy')
 
 const app = express()
 
+console.log('BOOTING')
+app.get('/status', (req, res) => res.sendStatus(204))
+
 // Internal port to run this service on.
 const PORT = parseInt(process.env.PORT)
 if (!PORT) throw new Error('no port given')
 
-// We also assume that other internal services are running on this port.
-const TASKS_TARGET = `http://tasks:${PORT}`
-const SEARCH_TARGET = `http://search:${PORT}`
+// What port are other services on?
+const SERVICE_PORT = parseInt(process.env.SERVICE_PORT) || PORT
+
+const TASKS_TARGET = `http://tasks:${SERVICE_PORT}`
+const SEARCH_TARGET = `http://search:${SERVICE_PORT}`
 
 //
 // Proxy internal APIs
@@ -44,9 +49,7 @@ app.all('/api/tasks*', (req, res) => {
 //
 
 const config = require('./webpack.config.js')
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(config.output.path))
-} else {
+if (process.env.NODE_ENV === 'development') {
   const webpack = require('webpack')
   const webpackDevMiddleware = require('webpack-dev-middleware')
   const compiler = webpack(config)
@@ -56,6 +59,8 @@ if (process.env.NODE_ENV === 'production') {
       publicPath: config.output.publicPath
     })
   )
+} else {
+  app.use(express.static(config.output.path))
 }
 
 app.listen(PORT, function() {

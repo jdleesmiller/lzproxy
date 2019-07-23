@@ -3,7 +3,7 @@ const app = express()
 
 const { Task } = require('storage')
 
-app.get('/status', (req, res) => res.sendStatus(200))
+app.get('/status', (req, res) => res.sendStatus(204))
 
 app.get('/api/tasks', async (req, res, next) => {
   try {

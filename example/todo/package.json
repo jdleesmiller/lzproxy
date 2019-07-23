@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha"
   },
   "keywords": [],
   "author": "John Lees-Miller",
@@ -28,10 +28,35 @@
     "core-js": "^3.1.4",
     "css-loader": "^3.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "lzproxy": "file:../lzproxy",
+    "mocha": "^6.2.0",
+    "node-fetch": "^2.6.0",
     "regenerator-runtime": "^0.13.2",
+    "storage": "file:../storage",
     "style-loader": "^0.23.1",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6",
     "webpack-dev-middleware": "^3.7.0"
+  },
+  "lzproxy": {
+    "options": {
+      "command": ["node", "server.js"],
+      "livenessProbePath": "/status"
+    },
+    "proxies": [
+      {
+        "environment": {
+          "NODE_ENV": "development",
+          "SERVICE_PORT": "18080"
+        }
+      },
+      {
+        "port": 18080,
+        "environment": {
+          "NODE_ENV": "test",
+          "SERVICE_PORT": "18080"
+        }
+      }
+    ]
   }
 }

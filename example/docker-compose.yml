@@ -40,7 +40,10 @@ services:
       - tasks_node_modules:/opt/tasks/node_modules
 
   todo:
-    build: todo
+    build:
+      context: ..
+      dockerfile: example/todo/Dockerfile
+    command: npx lzproxy
     depends_on:
       - search
       - tasks
@@ -49,8 +52,12 @@ services:
     ports:
       - '3000:8080'
     volumes:
+      - ../lzproxy:/opt/lzproxy
+      - ./storage:/opt/storage
       - ./todo:/opt/todo
       - todo_dist:/opt/todo/dist
+      - todo_lzproxy_node_modules:/opt/lzproxy/node_modules
+      - todo_storage_node_modules:/opt/storage/node_modules
       - todo_node_modules:/opt/todo/node_modules
 
   postgres:
@@ -58,6 +65,8 @@ services:
 
 volumes:
   todo_dist:
+  todo_lzproxy_node_modules:
+  todo_storage_node_modules:
   todo_node_modules:
   tasks_lzproxy_node_modules:
   tasks_storage_node_modules:

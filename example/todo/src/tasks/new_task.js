@@ -32,7 +32,7 @@ const NewTask = () => {
   }, [refocusNeeded])
 
   return (
-    <li className="list-group-item">
+    <li className="list-group-item todo-new-task">
       <form
         onSubmit={e => {
           setSubmitting(true)

@@ -11,6 +11,7 @@ const Search = () => {
         TASK_STORE.search(queryRef.current.value)
         e.preventDefault()
       }}
+      className="todo-search"
     >
       <div className="input-group mb-3">
         <input

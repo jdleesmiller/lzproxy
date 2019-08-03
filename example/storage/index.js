@@ -1,7 +1,7 @@
 const { Model } = require('objection')
 
 const knexfile = require('./knexfile')
-const knex = require('knex')(knexfile[process.env.NODE_ENV || 'development'])
+const knex = require('knex')(knexfile)
 
 Model.knex(knex)
 

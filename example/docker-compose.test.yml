@@ -13,6 +13,8 @@ services:
       - SYS_ADMIN # for puppeteer
     depends_on:
       - todo
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres/postgres
     volumes:
       - ./storage:/opt/storage
       - ./end-to-end-test:/opt/end-to-end-test

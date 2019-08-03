@@ -11,4 +11,5 @@ ENV=$1
 shift
 
 BIN=$(dirname "${BASH_SOURCE[0]}")
+
 "$BIN"/run "$ENV" --user root $@

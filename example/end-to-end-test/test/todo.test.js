@@ -1,6 +1,7 @@
+const assert = require('assert')
 const puppeteer = require('puppeteer')
-// const cleanup = require('storage/test/support/cleanup')
-// const fixtures = require('storage/test/support/fixtures')
+const cleanup = require('storage/test/support/cleanup')
+const fixtures = require('storage/test/support/fixtures')
 
 before(async () => {
   global.browser = await puppeteer.launch()
@@ -10,12 +11,52 @@ after(async () => {
   await global.browser.close()
 })
 
-describe('TO DO', function() {
-  this.timeout(5000)
+beforeEach(cleanup.database)
 
-  it('loads', async () => {
+describe('TO DO', function() {
+  this.timeout(10000)
+
+  it('creates and completes a task', async () => {
     const page = await global.browser.newPage()
     await page.goto('http://todo:8080')
-    await page.screenshot({ path: 'example.png' })
+    await page.waitForSelector('.todo-new-task')
+
+    let tasks = await page.$$('.todo-task')
+    assert.strictEqual(tasks.length, 0)
+
+    await page.type('.todo-new-task input[type=text]', 'foo')
+    await page.click('.todo-new-task button')
+    await page.waitForSelector('.todo-task label')
+
+    tasks = await page.$$('.todo-task')
+    assert.strictEqual(tasks.length, 1)
+
+    await page.click('.todo-task button')
+    await page.waitForSelector('.todo-task label', { hidden: true })
+
+    tasks = await page.$$('.todo-task')
+    assert.strictEqual(tasks.length, 0)
+  })
+
+  describe('with existing tasks', function() {
+    beforeEach(fixtures.create)
+
+    it('can search for tasks', async () => {
+      const page = await global.browser.newPage()
+      await page.goto('http://todo:8080')
+      await page.waitForSelector('.todo-new-task')
+
+      let tasks = await page.$$('.todo-task')
+      assert.strictEqual(tasks.length, 3)
+
+      await page.type('.todo-search input[type=text]', 'foo')
+      await page.click('.todo-search button')
+      await page.waitForFunction(
+        'document.querySelectorAll(".todo-task").length < 3'
+      )
+
+      tasks = await page.$$('.todo-task')
+      assert.strictEqual(tasks.length, 2)
+    })
   })
 })

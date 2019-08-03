@@ -10,7 +10,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "mocha"
+    "start": "NODE_ENV=test mocha"
   },
   "keywords": [],
   "author": "",

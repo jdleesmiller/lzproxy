@@ -26,7 +26,7 @@ const Task = ({ id, description }) => {
   }, [submitting])
 
   return (
-    <li className="list-group-item">
+    <li className="list-group-item todo-task">
       <form
         onSubmit={e => {
           setSubmitting(true)

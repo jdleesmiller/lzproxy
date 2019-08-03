@@ -1,0 +1,18 @@
+{
+  "name": "end-to-end-test",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "dependencies": {
+    "mocha": "^6.2.0",
+    "puppeteer": "^1.19.0",
+    "storage": "file:../storage"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

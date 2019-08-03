@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  search:
+    command: npx lzproxy
+    volumes:
+      - ../lzproxy:/opt/lzproxy
+      - ./storage:/opt/storage
+      - ./search:/opt/search
+      - search_lzproxy_node_modules:/opt/lzproxy/node_modules
+      - search_storage_node_modules:/opt/storage/node_modules
+      - search_node_modules:/opt/search/node_modules
+
+  tasks:
+    command: npx lzproxy
+    volumes:
+      - ../lzproxy:/opt/lzproxy
+      - ./storage:/opt/storage
+      - ./tasks:/opt/tasks
+      - tasks_lzproxy_node_modules:/opt/lzproxy/node_modules
+      - tasks_storage_node_modules:/opt/storage/node_modules
+      - tasks_node_modules:/opt/tasks/node_modules
+
+  todo:
+    command: npx lzproxy
+    volumes:
+      - ../lzproxy:/opt/lzproxy
+      - ./storage:/opt/storage
+      - ./todo:/opt/todo
+      - todo_dist:/opt/todo/dist
+      - todo_lzproxy_node_modules:/opt/lzproxy/node_modules
+      - todo_storage_node_modules:/opt/storage/node_modules
+      - todo_node_modules:/opt/todo/node_modules
+
+volumes:
+  todo_dist:
+  todo_lzproxy_node_modules:
+  todo_storage_node_modules:
+  todo_node_modules:
+  tasks_lzproxy_node_modules:
+  tasks_storage_node_modules:
+  tasks_node_modules:
+  search_lzproxy_node_modules:
+  search_storage_node_modules:
+  search_node_modules:

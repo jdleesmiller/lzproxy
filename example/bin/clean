@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+#
+# Remove all the stateless containers and the node_modules volumes.
+#
+
+set -e
+
+[[ "$1" =~ ^(dev|test)$ ]] || { echo "Usage: $0 dev|test"; exit 1; }
+ENV=$1
+shift
+
+BIN=$(dirname "${BASH_SOURCE[0]}")
+DC="$BIN"/dc
+
+NODE_MODULES_VOLUMES=$("$DC" "$ENV" config --volumes | grep node_modules)
+STATELESS_SERVICES=$("$DC" "$ENV" config --services | grep -v postgres)
+
+"$DC" "$ENV" stop
+
+"$DC" "$ENV" rm -v $STATELESS_SERVICES
+
+docker volume rm -f $NODE_MODULES_VOLUMES

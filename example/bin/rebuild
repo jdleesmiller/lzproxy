@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-VOLUMES=$(ruby -ryaml -e "puts YAML.load(File.read('docker-compose.yml'))['volumes'].keys.grep(/node_modules|dist/).map{ |volume| 'example_' + volume }.join(' ')")
-docker-compose stop
-docker-compose rm -v search tasks todo
-docker volume rm -f $VOLUMES
-docker-compose build

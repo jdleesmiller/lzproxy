@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  todo:
+    ports:
+      - '3000:8080'

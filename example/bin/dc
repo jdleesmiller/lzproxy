@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+#
+# Run docker-compose in the given environment.
+#
+
+set -e
+
+[[ "$1" =~ ^(dev|test)$ ]] || { echo "Usage: $0 dev|test command"; exit 1; }
+ENV=$1
+shift
+
+docker-compose \
+  --project-name "$(basename $(pwd))_$ENV" \
+  --file docker-compose.yml --file docker-compose.local.yml \
+  --file docker-compose.$ENV.yml \
+  $@

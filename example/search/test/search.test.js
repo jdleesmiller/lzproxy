@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 const cleanup = require('storage/test/support/cleanup')
 const fixtures = require('storage/test/support/fixtures')
 
-const BASE_URL = 'http://localhost:18080'
+const BASE_URL = `http://search:${process.env.PORT}`
 
 describe('search', () => {
   beforeEach(cleanup.database)

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+#
+# Run the tests for a service.
+#
+
+set -e
+
+[[ ! -z "$@" ]] || { echo "Usage: $0 service"; exit 1; }
+SERVICE=$1
+shift
+
+BIN=$(dirname "${BASH_SOURCE[0]}")
+
+"$BIN"/dc test up -d $SERVICE
+"$BIN"/dc test exec $SERVICE npm test $@

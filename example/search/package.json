@@ -4,7 +4,7 @@
   "description": "lzproxy example app: TODO - search service",
   "private": true,
   "scripts": {
-    "test": "NODE_ENV=test mocha"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "John Lees-Miller",
@@ -23,15 +23,6 @@
     "options": {
       "command": [ "nodemon", "server.js" ],
       "readinessProbePath": "/status"
-    },
-    "proxies": [
-      {},
-      {
-        "port": 18080,
-        "environment": {
-          "NODE_ENV": "test"
-        }
-      }
-    ]
+    }
   }
 }

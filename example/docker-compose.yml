@@ -7,9 +7,8 @@ services:
       dockerfile: example/search/Dockerfile
     depends_on:
       - postgres
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      PORT: 8080
+    env_file:
+      - common.env
 
   tasks:
     build:
@@ -17,9 +16,8 @@ services:
       dockerfile: example/tasks/Dockerfile
     depends_on:
       - postgres
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      PORT: 8080
+    env_file:
+      - common.env
 
   todo:
     build:
@@ -28,9 +26,10 @@ services:
     depends_on:
       - search
       - tasks
+    env_file:
+      - common.env
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-      PORT: 8080
+      SERVICE_PORT: 8080
 
   postgres:
     image: postgres

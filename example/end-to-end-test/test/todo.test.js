@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer')
 const cleanup = require('storage/test/support/cleanup')
 const fixtures = require('storage/test/support/fixtures')
 
-const BASE_URL = process.env.BASE_URL || 'http://todo:8080'
+const BASE_URL = process.env.BASE_URL || `http://todo:${process.env.PORT}`
 
 before(async () => {
   global.browser = await puppeteer.launch({

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "test": "NODE_ENV=test mocha"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "John Lees-Miller",
@@ -42,21 +42,6 @@
     "options": {
       "command": ["node", "server.js"],
       "readinessProbePath": "/status"
-    },
-    "proxies": [
-      {
-        "environment": {
-          "NODE_ENV": "development",
-          "SERVICE_PORT": "18080"
-        }
-      },
-      {
-        "port": 18080,
-        "environment": {
-          "NODE_ENV": "test",
-          "SERVICE_PORT": "18080"
-        }
-      }
-    ]
+    }
   }
 }

@@ -1,13 +1,23 @@
 version: '3'
 
 services:
+  search:
+    environment:
+      NODE_ENV: test
+
+  tasks:
+    environment:
+      NODE_ENV: test
+
   todo:
+    environment:
+      NODE_ENV: test
     ports:
       - '13000:8080'
 
   postgres:
     ports:
-      - '15432:5432'
+      - '15432:5432' # in case we run the end-to-end tests on the host
 
   end-to-end-test:
     build:
@@ -17,8 +27,10 @@ services:
       - SYS_ADMIN # for puppeteer
     depends_on:
       - todo
+    env_file:
+      - common.env
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+      NODE_ENV: test
     volumes:
       - ./storage:/opt/storage
       - ./end-to-end-test:/opt/end-to-end-test

@@ -5,6 +5,10 @@ services:
     ports:
       - '13000:8080'
 
+  postgres:
+    ports:
+      - '15432:5432'
+
   end-to-end-test:
     build:
       context: ..

@@ -3,8 +3,12 @@ const puppeteer = require('puppeteer')
 const cleanup = require('storage/test/support/cleanup')
 const fixtures = require('storage/test/support/fixtures')
 
+const BASE_URL = process.env.BASE_URL || 'http://todo:8080'
+
 before(async () => {
-  global.browser = await puppeteer.launch()
+  global.browser = await puppeteer.launch({
+    headless: process.env.PUPPETEER_HEADLESS !== 'false'
+  })
 })
 
 after(async () => {
@@ -18,7 +22,7 @@ describe('TO DO', function() {
 
   it('creates and completes a task', async () => {
     const page = await global.browser.newPage()
-    await page.goto('http://todo:8080')
+    await page.goto(BASE_URL)
     await page.waitForSelector('.todo-new-task')
 
     let tasks = await page.$$('.todo-task')
@@ -43,7 +47,7 @@ describe('TO DO', function() {
 
     it('can search for tasks', async () => {
       const page = await global.browser.newPage()
-      await page.goto('http://todo:8080')
+      await page.goto(BASE_URL)
       await page.waitForSelector('.todo-new-task')
 
       let tasks = await page.$$('.todo-task')

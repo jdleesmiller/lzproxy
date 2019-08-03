@@ -53,6 +53,7 @@ describe('TO DO', function() {
       let tasks = await page.$$('.todo-task')
       assert.strictEqual(tasks.length, 3)
 
+      // Search for 'foo' should match two tasks.
       await page.type('.todo-search input[type=text]', 'foo')
       await page.click('.todo-search button')
       await page.waitForFunction(
@@ -61,6 +62,16 @@ describe('TO DO', function() {
 
       tasks = await page.$$('.todo-task')
       assert.strictEqual(tasks.length, 2)
+
+      // Clear the search terms.
+      await page.evaluate(
+        'document.querySelector(".todo-search input[type=text]").value = ""'
+      )
+      await page.click('.todo-search button')
+
+      await page.waitForFunction(
+        'document.querySelectorAll(".todo-task").length === 3'
+      )
     })
   })
 })

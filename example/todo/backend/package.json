@@ -1,0 +1,31 @@
+{
+  "name": "todo-backend",
+  "version": "1.0.0",
+  "description": "lzproxy example app: TODO - main web service",
+  "private": true,
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "John Lees-Miller",
+  "license": "ISC",
+  "lzproxy": {
+    "options": {
+      "command": [
+        "node",
+        "server.js"
+      ],
+      "readinessProbePath": "/status"
+    }
+  },
+  "devDependencies": {
+    "lzproxy": "file:../../lzproxy",
+    "mocha": "^6.2.0",
+    "node-fetch": "^2.6.0",
+    "storage": "file:../../storage"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "http-proxy": "^1.17.0"
+  }
+}

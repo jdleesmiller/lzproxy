@@ -1,10 +1,11 @@
 {
-  "name": "search",
+  "name": "todo-frontend",
   "version": "1.0.0",
-  "description": "lzproxy example app: TODO - main web service",
+  "description": "lzproxy example app: TODO - frontend",
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production webpack",
+    "start": "webpack-dev-server",
     "test": "mocha"
   },
   "keywords": [],
@@ -12,9 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.3.1",
-    "classnames": "^2.2.6",
-    "express": "^4.17.1",
-    "http-proxy": "^1.17.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -28,20 +26,11 @@
     "core-js": "^3.1.4",
     "css-loader": "^3.0.0",
     "html-webpack-plugin": "^3.2.0",
-    "lzproxy": "file:../lzproxy",
     "mocha": "^6.2.0",
-    "node-fetch": "^2.6.0",
     "regenerator-runtime": "^0.13.2",
-    "storage": "file:../storage",
     "style-loader": "^0.23.1",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6",
-    "webpack-dev-middleware": "^3.7.0"
-  },
-  "lzproxy": {
-    "options": {
-      "command": ["node", "server.js"],
-      "readinessProbePath": "/status"
-    }
+    "webpack-dev-server": "^3.7.2"
   }
 }

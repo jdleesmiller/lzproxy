@@ -20,7 +20,9 @@ const SEARCH_TARGET = `http://search:${SERVICE_PORT}`
 // Proxy internal APIs
 //
 
-const apiProxy = httpProxy.createProxyServer({})
+const apiProxy = httpProxy.createProxyServer({
+  ws: process.env.NODE_ENV !== 'production'
+})
 
 apiProxy.on('error', function(err, req, res, target) {
   // The upstream server failed.
@@ -48,20 +50,7 @@ app.all('/api/tasks*', (req, res) => {
 // Serve the frontend
 //
 
-const config = require('./webpack.config.js')
-if (process.env.NODE_ENV === 'development') {
-  const webpack = require('webpack')
-  const webpackDevMiddleware = require('webpack-dev-middleware')
-  const compiler = webpack(config)
-
-  app.use(
-    webpackDevMiddleware(compiler, {
-      publicPath: config.output.publicPath
-    })
-  )
-} else {
-  app.use(express.static(config.output.path))
-}
+app.use(express.static('dist'))
 
 app.listen(PORT, function() {
   console.log(`todo: listening on ${PORT}`)

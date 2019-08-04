@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   search:
@@ -12,6 +12,8 @@ services:
   todo:
     environment:
       NODE_ENV: test
+
+  todo-frontend:
     ports:
       - '13000:8080'
 
@@ -26,7 +28,7 @@ services:
     cap_add:
       - SYS_ADMIN # for puppeteer
     depends_on:
-      - todo
+      - todo-frontend
     env_file:
       - common.env
     environment:

@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   search:
@@ -22,21 +22,37 @@ services:
       - tasks_node_modules:/opt/tasks/node_modules
 
   todo:
+    build:
+      context: ..
+      dockerfile: example/todo/Dockerfile
+      target: backend-dev
     command: npx lzproxy
     volumes:
       - ../lzproxy:/opt/lzproxy
       - ./storage:/opt/storage
-      - ./todo:/opt/todo
-      - todo_dist:/opt/todo/dist
+      - ./todo/backend:/opt/todo/backend
       - todo_lzproxy_node_modules:/opt/lzproxy/node_modules
       - todo_storage_node_modules:/opt/storage/node_modules
-      - todo_node_modules:/opt/todo/node_modules
+      - todo_backend_node_modules:/opt/todo/backend/node_modules
+
+  todo-frontend:
+    build:
+      context: ..
+      dockerfile: example/todo/Dockerfile
+      target: frontend
+    depends_on:
+      - todo
+    env_file:
+      - common.env
+    volumes:
+      - ./todo/frontend:/opt/todo/frontend
+      - todo_frontend_node_modules:/opt/todo/frontend/node_modules
 
 volumes:
-  todo_dist:
   todo_lzproxy_node_modules:
   todo_storage_node_modules:
-  todo_node_modules:
+  todo_backend_node_modules:
+  todo_frontend_node_modules:
   tasks_lzproxy_node_modules:
   tasks_storage_node_modules:
   tasks_node_modules:

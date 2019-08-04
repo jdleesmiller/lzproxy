@@ -1,6 +1,6 @@
-version: '3'
+version: '3.4'
 
 services:
-  todo:
+  todo-frontend:
     ports:
       - '3000:8080'

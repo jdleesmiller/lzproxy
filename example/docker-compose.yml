@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   search:
@@ -23,6 +23,7 @@ services:
     build:
       context: ..
       dockerfile: example/todo/Dockerfile
+      target: backend
     depends_on:
       - search
       - tasks

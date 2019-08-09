@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+BIN=$(dirname "${BASH_SOURCE[0]}")
+"$BIN"/dc dev stop
+"$BIN"/dc test stop

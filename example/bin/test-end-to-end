@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+#
+# Run the end-to-end tests.
+#
+
+set -e
+
+BIN=$(dirname "${BASH_SOURCE[0]}")
+
+"$BIN"/dc test --file docker-compose.end-to-end-test.yml \
+  run --rm end-to-end-test

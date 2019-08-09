@@ -20,23 +20,3 @@ services:
   postgres:
     ports:
       - '15432:5432' # in case we run the end-to-end tests on the host
-
-  end-to-end-test:
-    build:
-      context: ..
-      dockerfile: example/end-to-end-test/Dockerfile
-    cap_add:
-      - SYS_ADMIN # for puppeteer
-    depends_on:
-      - todo-frontend
-    env_file:
-      - common.env
-    environment:
-      NODE_ENV: test
-    volumes:
-      - ./storage:/opt/storage
-      - ./end-to-end-test:/opt/end-to-end-test
-      - end_to_end_test_node_modules:/opt/end-to-end-test/node_modules
-
-volumes:
-  end_to_end_test_node_modules:

@@ -8,10 +8,10 @@ set -e
 
 BIN=$(dirname "${BASH_SOURCE[0]}")
 
-"$BIN"/dc test up -d todo
+"$BIN"/dc test up -d
 "$BIN"/dc test exec tasks npm test
 "$BIN"/dc test exec search npm test
 "$BIN"/dc test exec todo npm test
 "$BIN"/dc test exec todo-frontend npm test
 
-"$BIN"/run test end-to-end-test
+"$BIN"/test-end-to-end

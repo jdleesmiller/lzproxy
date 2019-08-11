@@ -133,6 +133,30 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
+  it('handles a target that hangs on the health check', async () => {
+    const { target, events } = createTarget(targetDefaultOptions.hang)
+    target.start()
+    const { error } = await events.shift()
+    assert(error)
+    assert(/did not come up/.test(error.message))
+
+    assert(target.isIdle())
+    assert(!target.port)
+    assert(!target.target)
+  })
+
+  it('handles a target that never comes up', async () => {
+    const { target, events } = createTarget(targetDefaultOptions.neverReady)
+    target.start()
+    const { error } = await events.shift()
+    assert(error)
+    assert(/did not come up/.test(error.message))
+
+    assert(target.isIdle())
+    assert(!target.port)
+    assert(!target.target)
+  })
+
   it('sets the target environment variables', async () => {
     const { target, events } = createTarget({
       ...targetDefaultOptions.diagnostic,

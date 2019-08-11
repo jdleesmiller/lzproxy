@@ -9,30 +9,47 @@ exports.startWithDiagnosticTarget = startWithDiagnosticTarget
 exports.startSingleWithDiagnosticTarget = startSingleWithDiagnosticTarget
 exports.waitForStop = waitForStop
 
+function getTargetPath(targetName) {
+  return path.join(__dirname, '..', 'targets', targetName)
+}
+
 const targetPaths = {
-  crash: path.join(__dirname, '..', 'targets', 'crash.js'),
-  crashSlowly: path.join(__dirname, '..', 'targets', 'crash-slowly.js'),
-  diagnostic: path.join(__dirname, '..', 'targets', 'diagnostic.js')
+  crash: getTargetPath('crash.js'),
+  crashSlowly: getTargetPath('crash-slowly.js'),
+  diagnostic: getTargetPath('diagnostic.js'),
+  hang: getTargetPath('hang.js'),
+  neverReady: getTargetPath('never-ready.js')
+}
+
+const targetDefaultDefaultOptions = {
+  readinessProbePath: '/status',
+  readinessRetryDelayMs: 500,
+  port: 8080
 }
 
 const targetDefaultOptions = {
   crash: {
-    command: ['node', targetPaths.crash],
-    readinessProbePath: '/status',
-    readinessRetryDelayMs: 500,
-    port: 8080
+    ...targetDefaultDefaultOptions,
+    command: ['node', targetPaths.crash]
   },
   crashSlowly: {
-    command: ['node', targetPaths.crashSlowly],
-    readinessProbePath: '/status',
-    readinessRetryDelayMs: 500,
-    port: 8080
+    ...targetDefaultDefaultOptions,
+    command: ['node', targetPaths.crashSlowly]
   },
   diagnostic: {
-    command: ['node', targetPaths.diagnostic],
-    readinessProbePath: '/status',
-    readinessRetryDelayMs: 500,
-    port: 8080
+    ...targetDefaultDefaultOptions,
+    command: ['node', targetPaths.diagnostic]
+  },
+  hang: {
+    ...targetDefaultDefaultOptions,
+    command: ['node', targetPaths.hang],
+    readinessMaxTries: 2,
+    readinessTimeoutMs: 1000
+  },
+  neverReady: {
+    ...targetDefaultDefaultOptions,
+    command: ['node', targetPaths.neverReady],
+    readinessMaxTries: 2
   }
 }
 exports.targetDefaultOptions = targetDefaultOptions

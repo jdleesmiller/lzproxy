@@ -19,7 +19,7 @@ function normalize(configData) {
     environment: {},
     host: '127.0.0.1',
     port: parseInt(process.env.PORT, 10) || 0,
-    name: process.env.PORT,
+    name: process.env.PORT || '',
     readinessMaxTries: 20,
     readinessProbePath: '/',
     readinessRetryDelayMs: 1000,

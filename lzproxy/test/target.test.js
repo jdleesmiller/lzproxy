@@ -46,8 +46,8 @@ describe('lzproxy Target', function() {
     it('starts a target and stops it with sigterm', async () => {
       target.stop()
 
-      const { signal } = await events.shift()
-      assert.strictEqual(signal, 'SIGTERM')
+      const { code } = await events.shift()
+      assert.strictEqual(code, 0)
       assert(!target.port)
       assert(!target.target)
     })
@@ -151,7 +151,7 @@ describe('lzproxy Target', function() {
     assert.strictEqual(body.env.TEST_LZPROXY_ENV_VAR, 'foo')
 
     target.stop()
-    const { signal } = await events.shift()
-    assert.strictEqual(signal, 'SIGTERM') // exit
+    const { code } = await events.shift()
+    assert.strictEqual(code, 0)
   })
 })

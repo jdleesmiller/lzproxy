@@ -18,12 +18,14 @@ function normalize(configData) {
     command: ['npm', 'start'],
     environment: {},
     host: '127.0.0.1',
+    port: parseInt(process.env.PORT, 10) || 0,
+    name: process.env.PORT,
     readinessMaxTries: 20,
     readinessProbePath: '/',
     readinessRetryDelayMs: 1000,
     readinessTimeoutMs: 2000,
-    port: parseInt(process.env.PORT, 10) || 0,
-    targetPortEnvironmentVariable: 'PORT'
+    targetPortEnvironmentVariable: 'PORT',
+    targetTerminationSignal: 'SIGTERM'
   }
 
   config.options = { ...defaultOptions, ...config.options }

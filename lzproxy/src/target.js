@@ -45,8 +45,8 @@ class Target {
     this.config = config
     this.onReady = onReady
     this.onExit = onExit
-    this.onStdout = onStdout || (line => console.log(`${this}: ${line}`))
-    this.onStderr = onStderr || (line => console.error(`${this}: ${line}`))
+    this.onStdout = onStdout || (line => console.log(line))
+    this.onStderr = onStderr || (line => console.error(line))
     this.state = STATE_IDLE
 
     this.port = null

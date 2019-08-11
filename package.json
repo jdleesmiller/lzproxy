@@ -8,12 +8,16 @@
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^13.0.1",
     "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-mocha": "^6.0.0",
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-standard": "^4.0.0",
     "prettier": "^1.18.2"
+  },
+  "scripts": {
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "John Lees-Miller",

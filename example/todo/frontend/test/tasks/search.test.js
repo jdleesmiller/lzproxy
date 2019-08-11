@@ -7,14 +7,16 @@ import TASK_STORE from '../../src/tasks/task_store'
 
 describe('Search', function() {
   let taskStoreSearch
-  beforeEach(() => {
+  beforeEach(function() {
     taskStoreSearch = td.replace(TASK_STORE, 'search')
   })
-  afterEach(() => td.reset())
+  afterEach(function() {
+    return td.reset()
+  })
 
   afterEach(cleanup)
 
-  it('sets search query', () => {
+  it('sets search query', function() {
     const { getByLabelText, getByText } = render(<Search />)
     fireEvent.change(getByLabelText(/search for/i), {
       target: { value: 'foo' }

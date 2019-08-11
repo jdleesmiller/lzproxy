@@ -6,13 +6,13 @@ const fixtures = require('storage/test/support/fixtures')
 const BASE_URL =
   process.env.BASE_URL || `http://todo-frontend:${process.env.PORT}`
 
-before(async () => {
+before(async function() {
   global.browser = await puppeteer.launch({
     headless: process.env.PUPPETEER_HEADLESS !== 'false'
   })
 })
 
-after(async () => {
+after(async function() {
   await global.browser.close()
 })
 
@@ -21,7 +21,7 @@ beforeEach(cleanup.database)
 describe('TO DO', function() {
   this.timeout(10000)
 
-  it('creates and completes a task', async () => {
+  it('creates and completes a task', async function() {
     const page = await global.browser.newPage()
     await page.goto(BASE_URL)
     await page.waitForSelector('.todo-new-task')
@@ -46,7 +46,7 @@ describe('TO DO', function() {
   describe('with existing tasks', function() {
     beforeEach(fixtures.create)
 
-    it('can search for tasks', async () => {
+    it('can search for tasks', async function() {
       const page = await global.browser.newPage()
       await page.goto(BASE_URL)
       await page.waitForSelector('.todo-new-task')

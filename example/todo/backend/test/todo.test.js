@@ -6,11 +6,11 @@ const fixtures = require('storage/test/support/fixtures')
 
 const BASE_URL = `http://todo:${process.env.PORT}`
 
-describe('tasks', () => {
+describe('tasks', function() {
   beforeEach(cleanup.database)
   beforeEach(fixtures.create)
 
-  it('search tasks', async () => {
+  it('search tasks', async function() {
     const response = await fetch(new URL('/api/tasks?q=foo', BASE_URL), {
       method: 'GET',
       headers: jsonHeaders()
@@ -22,7 +22,7 @@ describe('tasks', () => {
     assert.strictEqual(body.tasks[1].description, 'foo bar')
   })
 
-  it('should list tasks', async () => {
+  it('should list tasks', async function() {
     const response = await fetch(new URL('/api/tasks', BASE_URL), {
       method: 'GET',
       headers: jsonHeaders()
@@ -33,7 +33,7 @@ describe('tasks', () => {
     assert.strictEqual(body.tasks[0].description, 'foo')
   })
 
-  it('should create a task', async () => {
+  it('should create a task', async function() {
     const response = await fetch(new URL('/api/tasks', BASE_URL), {
       method: 'POST',
       headers: jsonHeaders(),
@@ -44,7 +44,7 @@ describe('tasks', () => {
     assert.strictEqual(body.task.description, 'a')
   })
 
-  it('should complete a task', async () => {
+  it('should complete a task', async function() {
     let response = await fetch(
       new URL(`/api/tasks/${fixtures.tasks.foo.id}`, BASE_URL),
       {

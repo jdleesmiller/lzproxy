@@ -7,14 +7,16 @@ import TASK_STORE from '../../src/tasks/task_store'
 
 describe('Task', function() {
   let taskStoreComplete
-  beforeEach(() => {
+  beforeEach(function() {
     taskStoreComplete = td.replace(TASK_STORE, 'complete')
   })
-  afterEach(() => td.reset())
+  afterEach(function() {
+    return td.reset()
+  })
 
   afterEach(cleanup)
 
-  it('can be completed', () => {
+  it('can be completed', function() {
     const { getByText } = render(<Task id={1} description="foo" />)
     fireEvent.click(getByText('✓'))
     td.verify(taskStoreComplete(1))

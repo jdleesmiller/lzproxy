@@ -6,11 +6,11 @@ const fixtures = require('storage/test/support/fixtures')
 
 const BASE_URL = `http://search:${process.env.PORT}`
 
-describe('search', () => {
+describe('search', function() {
   beforeEach(cleanup.database)
   beforeEach(fixtures.create)
 
-  it('search tasks', async () => {
+  it('search tasks', async function() {
     const response = await fetch(new URL('/api/tasks?q=foo', BASE_URL), {
       method: 'GET',
       headers: jsonHeaders()

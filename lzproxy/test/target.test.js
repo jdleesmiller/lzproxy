@@ -1,49 +1,21 @@
 const assert = require('assert')
 const fetch = require('node-fetch')
 
-const { Target } = require('..')
-
-const {
-  normalizeTargetOptions,
-  ProducerConsumerBuffer,
-  targetDefaultOptions
-} = require('./support')
-
-function createTarget(options) {
-  const events = new ProducerConsumerBuffer()
-  const stdout = []
-  const stderr = []
-  const target = new Target(
-    normalizeTargetOptions(options),
-    function onReady() {
-      events.push()
-    },
-    function onExit(exit) {
-      events.push(exit)
-    },
-    function onStdout(line) {
-      stdout.push(line)
-    },
-    function onStderr(line) {
-      stderr.push(line)
-    }
-  )
-  return { target, events, stdout, stderr }
-}
-
 describe('lzproxy Target', function() {
   this.timeout(15000)
 
   describe('with ready diagnostic target', function() {
     let target, events
-    beforeEach(async () => {
-      ;({ target, events } = createTarget(targetDefaultOptions.diagnostic))
+    beforeEach(async function() {
+      ;({ target, events } = this.createTarget(
+        this.targetDefaultOptions.diagnostic
+      ))
       target.start()
       const result = await events.shift()
       assert(!result) // ready should finish first
     })
 
-    it('starts a target and stops it with sigterm', async () => {
+    it('starts a target and stops it with sigterm', async function() {
       target.stop()
 
       const { code } = await events.shift()
@@ -52,7 +24,7 @@ describe('lzproxy Target', function() {
       assert(!target.target)
     })
 
-    it('starts a target that exits cleanly', async () => {
+    it('starts a target that exits cleanly', async function() {
       const stopUrl = new URL('/stop', target.getUrl())
       const response = await fetch(stopUrl, { method: 'POST' })
       assert(response.ok)
@@ -63,7 +35,7 @@ describe('lzproxy Target', function() {
       assert(!target.target)
     })
 
-    it('starts a target that exits nonzero', async () => {
+    it('starts a target that exits nonzero', async function() {
       const stopUrl = new URL('/stop?code=1', target.getUrl())
       const response = await fetch(stopUrl, { method: 'POST' })
       assert(response.ok)
@@ -74,7 +46,7 @@ describe('lzproxy Target', function() {
       assert(!target.target)
     })
 
-    it('restarts and a target that stops', async () => {
+    it('restarts and a target that stops', async function() {
       let stopUrl = new URL('/stop', target.getUrl())
       let response = await fetch(stopUrl, { method: 'POST' })
       assert(response.ok)
@@ -100,16 +72,16 @@ describe('lzproxy Target', function() {
     })
   })
 
-  it('handles stopping when idle', async () => {
-    const { target } = createTarget(targetDefaultOptions.crash)
+  it('handles stopping when idle', async function() {
+    const { target } = this.createTarget(this.targetDefaultOptions.crash)
     assert(target.isIdle())
     target.stop()
     assert(target.isIdle())
   })
 
-  it('handles a target that crashes immediately', async () => {
-    const { target, events, stdout, stderr } = createTarget(
-      targetDefaultOptions.crash
+  it('handles a target that crashes immediately', async function() {
+    const { target, events, stdout, stderr } = this.createTarget(
+      this.targetDefaultOptions.crash
     )
     target.start()
     const { code } = await events.shift()
@@ -120,9 +92,9 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
-  it('handles a target that crashes slowly', async () => {
-    const { target, events, stdout, stderr } = createTarget(
-      targetDefaultOptions.crashSlowly
+  it('handles a target that crashes slowly', async function() {
+    const { target, events, stdout, stderr } = this.createTarget(
+      this.targetDefaultOptions.crashSlowly
     )
     target.start()
     const { code } = await events.shift()
@@ -133,8 +105,8 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
-  it('handles a target that hangs on the health check', async () => {
-    const { target, events } = createTarget(targetDefaultOptions.hang)
+  it('handles a target that hangs on the health check', async function() {
+    const { target, events } = this.createTarget(this.targetDefaultOptions.hang)
     target.start()
     const { error } = await events.shift()
     assert(error)
@@ -145,8 +117,10 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
-  it('handles a target that never comes up', async () => {
-    const { target, events } = createTarget(targetDefaultOptions.neverReady)
+  it('handles a target that never comes up', async function() {
+    const { target, events } = this.createTarget(
+      this.targetDefaultOptions.neverReady
+    )
     target.start()
     const { error } = await events.shift()
     assert(error)
@@ -157,9 +131,9 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
-  it('sets the target environment variables', async () => {
-    const { target, events } = createTarget({
-      ...targetDefaultOptions.diagnostic,
+  it('sets the target environment variables', async function() {
+    const { target, events } = this.createTarget({
+      ...this.targetDefaultOptions.diagnostic,
       environment: {
         TEST_LZPROXY_ENV_VAR: 'foo'
       }

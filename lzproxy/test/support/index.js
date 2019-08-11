@@ -1,13 +1,12 @@
 const assert = require('assert')
+const getPort = require('get-port')
 const path = require('path')
 
 const lzproxy = require('../..')
+const Target = require('../../src/target')
 const normalizeConfig = require('../../src/config').normalize
 
-exports.ProducerConsumerBuffer = require('./producer-consumer-buffer')
-exports.startWithDiagnosticTarget = startWithDiagnosticTarget
-exports.startSingleWithDiagnosticTarget = startSingleWithDiagnosticTarget
-exports.waitForStop = waitForStop
+const ProducerConsumerBuffer = require('./producer-consumer-buffer')
 
 function getTargetPath(targetName) {
   return path.join(__dirname, '..', 'targets', targetName)
@@ -21,72 +20,103 @@ const targetPaths = {
   neverReady: getTargetPath('never-ready.js')
 }
 
-const targetDefaultDefaultOptions = {
-  readinessProbePath: '/status',
-  readinessRetryDelayMs: 500,
-  port: 8080
-}
+// eslint-disable-next-line mocha/no-top-level-hooks,mocha/no-hooks-for-single-case
+before(async function() {
+  const testPort = await getPort()
+  this.testPort = testPort
+  this.testUrl = `http://localhost:${testPort}`
 
-const targetDefaultOptions = {
-  crash: {
-    ...targetDefaultDefaultOptions,
-    command: ['node', targetPaths.crash]
-  },
-  crashSlowly: {
-    ...targetDefaultDefaultOptions,
-    command: ['node', targetPaths.crashSlowly]
-  },
-  diagnostic: {
-    ...targetDefaultDefaultOptions,
-    command: ['node', targetPaths.diagnostic]
-  },
-  hang: {
-    ...targetDefaultDefaultOptions,
-    command: ['node', targetPaths.hang],
-    readinessMaxTries: 2,
-    readinessTimeoutMs: 1000
-  },
-  neverReady: {
-    ...targetDefaultDefaultOptions,
-    command: ['node', targetPaths.neverReady],
-    readinessMaxTries: 2
+  const targetDefaultDefaultOptions = {
+    readinessProbePath: '/status',
+    readinessRetryDelayMs: 500,
+    port: testPort
   }
-}
-exports.targetDefaultOptions = targetDefaultOptions
 
-function normalizeTargetOptions(options) {
-  return normalizeConfig({ lzproxy: { options } })[0]
-}
-exports.normalizeTargetOptions = normalizeTargetOptions
+  this.targetDefaultOptions = {
+    crash: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.crash]
+    },
+    crashSlowly: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.crashSlowly]
+    },
+    diagnostic: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.diagnostic]
+    },
+    hang: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.hang],
+      readinessMaxTries: 2,
+      readinessTimeoutMs: 1000
+    },
+    neverReady: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.neverReady],
+      readinessMaxTries: 2
+    }
+  }
 
-function startWithDiagnosticTarget(lzproxyConfig = {}) {
-  const stdout = []
-  const stderr = []
-  const proxies = lzproxy.start(
-    normalizeConfig({
-      lzproxy: {
-        options: targetDefaultOptions.diagnostic,
-        ...lzproxyConfig
+  function normalizeTargetOptions(options) {
+    return normalizeConfig({ lzproxy: { options } })[0]
+  }
+
+  function createTarget(options) {
+    const events = new ProducerConsumerBuffer()
+    const stdout = []
+    const stderr = []
+    const target = new Target(
+      normalizeTargetOptions(options),
+      function onReady() {
+        events.push()
+      },
+      function onExit(exit) {
+        events.push(exit)
+      },
+      function onStdout(line) {
+        stdout.push(line)
+      },
+      function onStderr(line) {
+        stderr.push(line)
       }
-    }),
-    line => stdout.push(line),
-    line => stderr.push(line)
-  )
-  return { proxies, stdout, stderr }
-}
+    )
+    return { target, events, stdout, stderr }
+  }
+  this.createTarget = createTarget
 
-function startSingleWithDiagnosticTarget(lzproxyConfig = {}) {
-  const { proxies } = startWithDiagnosticTarget(lzproxyConfig)
-  assert.strictEqual(proxies.length, 1)
-  return proxies[0]
-}
+  function startProxies(config) {
+    const stdout = []
+    const stderr = []
+    const proxies = lzproxy.start(
+      normalizeConfig(config),
+      line => stdout.push(line),
+      line => stderr.push(line)
+    )
+    return { proxies, stdout, stderr }
+  }
+  this.startProxies = startProxies
 
-async function waitForStop(proxy) {
-  proxy.stop()
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      if (proxy.isStopped()) resolve()
-      clearInterval(interval)
-    }, 100)
-  })
-}
+  function startProxy(options) {
+    const { proxies } = startProxies({ lzproxy: { options } })
+    assert.strictEqual(proxies.length, 1)
+    return proxies[0]
+  }
+  this.startProxy = startProxy
+
+  function startProxyWithDiagnosticTarget() {
+    return startProxy(this.targetDefaultOptions.diagnostic)
+  }
+  this.startProxyWithDiagnosticTarget = startProxyWithDiagnosticTarget
+
+  async function waitForStop(proxy) {
+    proxy.stop()
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        if (proxy.isStopped()) resolve()
+        clearInterval(interval)
+      }, 100)
+    })
+  }
+  this.waitForStop = waitForStop
+})

@@ -16,7 +16,7 @@
   },
   "bin": "bin/lzproxy",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --file test/support"
   },
   "keywords": [
     "lazy",

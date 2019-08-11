@@ -11,14 +11,16 @@ import TaskList from '../../src/tasks/task_list'
 
 describe('TaskList', function() {
   let windowFetch
-  beforeEach(() => {
+  beforeEach(function() {
     windowFetch = td.replace(global, 'fetch')
   })
-  afterEach(() => td.reset())
+  afterEach(function() {
+    return td.reset()
+  })
 
   afterEach(cleanup)
 
-  it('can be completed', async () => {
+  it('can be completed', async function() {
     const json = td.function()
     td.when(
       windowFetch(

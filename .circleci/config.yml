@@ -6,19 +6,19 @@ lzproxy-build: &lzproxy-build
 
     - restore_cache:
         keys:
-          - root-dependencies-{{ checksum "./package-lock.json" }}
+          - root-dependencies-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "./package-lock.json" }}
     - run: npm install -q
     - save_cache:
-        key: root-dependencies-{{ checksum "./package-lock.json" }}
+        key: root-dependencies-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "./package-lock.json" }}
         paths:
           - ./node_modules
 
     - restore_cache:
         keys:
-          - lzproxy-dependencies-{{ checksum "./lzproxy/package-lock.json" }}
+          - lzproxy-dependencies-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "./lzproxy/package-lock.json" }}
     - run: cd lzproxy && npm install -q
     - save_cache:
-        key: lzproxy-dependencies-{{ checksum "./lzproxy/package-lock.json" }}
+        key: lzproxy-dependencies-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "./lzproxy/package-lock.json" }}
         paths:
           - ./lzproxy/node_modules
 

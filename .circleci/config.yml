@@ -1,29 +1,45 @@
 version: 2
+
+lzproxy-build: &lzproxy-build
+  steps:
+    - checkout
+
+    - restore_cache:
+        keys:
+          - root-dependencies-{{ checksum "./package-lock.json" }}
+    - run: npm install -q
+    - save_cache:
+        key: root-dependencies-{{ checksum "./package-lock.json" }}
+        paths:
+          - ./node_modules
+
+    - restore_cache:
+        keys:
+          - lzproxy-dependencies-{{ checksum "./lzproxy/package-lock.json" }}
+    - run: cd lzproxy && npm install -q
+    - save_cache:
+        key: lzproxy-dependencies-{{ checksum "./lzproxy/package-lock.json" }}
+        paths:
+          - ./lzproxy/node_modules
+
+    - run: npm run lint
+
+    - run: cd lzproxy && npm test
+
 jobs:
-  build:
+  node-10:
+    <<: *lzproxy-build
     docker:
       - image: circleci/node:10
-    steps:
-      - checkout
 
-      - restore_cache:
-          keys:
-            - root-dependencies-{{ checksum "./package-lock.json" }}
-      - run: npm install -q
-      - save_cache:
-          key: root-dependencies-{{ checksum "./package-lock.json" }}
-          paths:
-            - ./node_modules
+  node-12:
+    <<: *lzproxy-build
+    docker:
+      - image: circleci/node:12
 
-      - restore_cache:
-          keys:
-            - lzproxy-dependencies-{{ checksum "./lzproxy/package-lock.json" }}
-      - run: cd lzproxy && npm install -q
-      - save_cache:
-          key: lzproxy-dependencies-{{ checksum "./lzproxy/package-lock.json" }}
-          paths:
-            - ./lzproxy/node_modules
-
-      - run: npm run lint
-
-      - run: cd lzproxy && npm test
+workflows:
+  version: 2
+  build:
+    jobs:
+      - node-10
+      - node-12

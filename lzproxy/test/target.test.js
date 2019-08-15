@@ -1,4 +1,5 @@
 const assert = require('assert')
+const getPort = require('get-port')
 const fetch = require('node-fetch')
 
 describe('lzproxy Target', function() {
@@ -147,6 +148,26 @@ describe('lzproxy Target', function() {
 
     const body = await response.json()
     assert.strictEqual(body.env.TEST_LZPROXY_ENV_VAR, 'foo')
+
+    target.stop()
+    const { code } = await events.shift()
+    assert.strictEqual(code, 0)
+  })
+
+  it('allows the target port to be configured', async function() {
+    const targetPort = await getPort()
+    const { target, events } = this.createTarget({
+      ...this.targetDefaultOptions.diagnostic,
+      targetPort
+    })
+    target.start()
+    const result = await events.shift()
+    assert(!result) // ready
+
+    const response = await fetch(target.getUrl())
+    assert(response.ok)
+    const body = await response.json()
+    assert.strictEqual(body.port, targetPort)
 
     target.stop()
     const { code } = await events.shift()

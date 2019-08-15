@@ -183,9 +183,14 @@ class Target {
   }
 
   async _start() {
+    debug(`target command ${this.config.command.join(' ')}`)
     const [command, ...args] = this.config.command
-    debug(`target command ${this.config.command}`)
-    this.port = await getPort({ host: '::' })
+
+    if (this.config.targetPort != null) {
+      this.port = this.config.targetPort
+    } else {
+      this.port = await getPort({ host: '::' })
+    }
     debug(`target port ${this.port}`)
     this.readinessError = null
     this.target = spawn(command, args, {

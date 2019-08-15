@@ -27,6 +27,7 @@ function normalize(configData) {
     readinessProbeResponseBody: null,
     readinessRetryDelayMs: 1000,
     readinessTimeoutMs: 2000,
+    targetPort: null,
     targetPortEnvironmentVariable: 'PORT',
     targetTerminationSignal: 'SIGTERM'
   }

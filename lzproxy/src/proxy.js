@@ -195,6 +195,7 @@ class Proxy {
 
   async _handleProxyRequest(req, res) {
     debug('_handleProxyRequest')
+    if (this._fakeReadinessProbe(req, res)) return
     try {
       switch (this.state) {
         case STATE_STARTING:
@@ -236,6 +237,17 @@ class Proxy {
       res.writeHead(503)
       res.end()
     }
+  }
+
+  _fakeReadinessProbe(req, res) {
+    if (!this.config.readinessProbePathRegExp.test(req.url)) return false
+
+    if (this.config.readinessProbeResponseBody != null) {
+      res.write(this.config.readinessProbeResponseBody)
+    }
+    res.writeHead(this.config.readinessProbeResponseStatusCode)
+    res.end()
+    return true
   }
 
   _startTarget() {

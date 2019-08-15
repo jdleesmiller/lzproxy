@@ -97,19 +97,24 @@ before(async function() {
   }
   this.startProxies = startProxies
 
-  function startProxy(options) {
-    const { proxies } = startProxies({ lzproxy: { options } })
+  function startProxy(config) {
+    const { proxies } = startProxies(config)
     assert.strictEqual(proxies.length, 1)
     return proxies[0]
   }
   this.startProxy = startProxy
 
+  function startProxyWithOptions(options) {
+    return this.startProxy({ lzproxy: { options } })
+  }
+  this.startProxyWithOptions = startProxyWithOptions
+
   function startProxyWithDiagnosticTarget() {
-    return startProxy(this.targetDefaultOptions.diagnostic)
+    return this.startProxyWithOptions(this.targetDefaultOptions.diagnostic)
   }
   this.startProxyWithDiagnosticTarget = startProxyWithDiagnosticTarget
 
-  async function waitForStop(proxy) {
+  async function stopAndWait(proxy) {
     proxy.stop()
     return new Promise((resolve, reject) => {
       const interval = setInterval(() => {
@@ -118,5 +123,5 @@ before(async function() {
       }, 100)
     })
   }
-  this.waitForStop = waitForStop
+  this.stopAndWait = stopAndWait
 })

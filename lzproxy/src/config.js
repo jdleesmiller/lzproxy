@@ -22,6 +22,9 @@ function normalize(configData) {
     name: process.env.PORT || '',
     readinessMaxTries: 20,
     readinessProbePath: '/',
+    readinessProbePathRegExp: null,
+    readinessProbeResponseStatusCode: 200,
+    readinessProbeResponseBody: null,
     readinessRetryDelayMs: 1000,
     readinessTimeoutMs: 2000,
     targetPortEnvironmentVariable: 'PORT',
@@ -29,6 +32,7 @@ function normalize(configData) {
   }
 
   config.options = { ...defaultOptions, ...config.options }
+  normalizeOptions(config.options)
 
   if (!config.proxies || config.proxies.length === 0) {
     config.proxies = [{}]
@@ -38,6 +42,15 @@ function normalize(configData) {
     ...config.options,
     ...proxyConfig
   }))
+}
+
+function normalizeOptions(options) {
+  if (!options.readinessProbePathRegExp) {
+    options.readinessProbePathRegExp = new RegExp(
+      `^${options.readinessProbePath}$`
+    )
+  }
+  return options
 }
 
 exports.read = read

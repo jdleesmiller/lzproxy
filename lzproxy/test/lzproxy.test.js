@@ -5,8 +5,7 @@ const fetch = require('node-fetch')
 describe('lzproxy Proxy', function() {
   it('should start and stop cleanly without any requests', async function() {
     const proxy = this.startProxyWithDiagnosticTarget()
-    proxy.stop()
-    await this.waitForStop(proxy)
+    await this.stopAndWait(proxy)
   })
 
   it('should start a single proxy and handle a request', async function() {
@@ -18,7 +17,7 @@ describe('lzproxy Proxy', function() {
       const body = await response.json()
       assert.strictEqual(body.port, proxy.target.port)
     } finally {
-      await this.waitForStop(proxy)
+      await this.stopAndWait(proxy)
     }
   })
 
@@ -41,8 +40,19 @@ describe('lzproxy Proxy', function() {
       body = await response.json()
       assert.strictEqual(body.port, proxies[1].target.port)
     } finally {
-      await this.waitForStop(proxies[0])
-      await this.waitForStop(proxies[1])
+      await this.stopAndWait(proxies[0])
+      await this.stopAndWait(proxies[1])
     }
+  })
+
+  it('should handle readiness probe without starting target', async function() {
+    const proxy = this.startProxyWithOptions({
+      ...this.targetDefaultOptions.neverReady,
+      readinessMaxTries: 20 // make sure we time out if the target starts
+    })
+
+    const response = await fetch(new URL('/status', this.testUrl))
+    assert(response.ok)
+    await this.stopAndWait(proxy)
   })
 })

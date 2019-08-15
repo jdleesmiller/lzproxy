@@ -3,12 +3,12 @@ const getPort = require('get-port')
 const fetch = require('node-fetch')
 
 describe('lzproxy Proxy', function() {
-  it('should start and stop cleanly without any requests', async function() {
+  it('starts and stops cleanly without any requests', async function() {
     const proxy = this.startProxyWithDiagnosticTarget()
     await this.stopAndWait(proxy)
   })
 
-  it('should start a single proxy and handle a request', async function() {
+  it('starts a single proxy and handles a request', async function() {
     const proxy = this.startProxyWithDiagnosticTarget()
     try {
       const response = await fetch(this.testUrl)
@@ -21,7 +21,7 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('should start a two proxies and handle requests', async function() {
+  it('starts two proxies and handles requests', async function() {
     const otherPort = await getPort()
     const { proxies } = this.startProxies({
       lzproxy: {
@@ -45,7 +45,7 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('should handle readiness probe without starting target', async function() {
+  it('responds to readiness probe without starting target', async function() {
     const proxy = this.startProxyWithOptions({
       ...this.targetDefaultOptions.neverReady,
       readinessMaxTries: 20 // make sure we time out if the target starts

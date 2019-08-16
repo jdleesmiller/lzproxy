@@ -364,8 +364,9 @@ class Proxy {
     this.server.close(this._handleServerClosed.bind(this))
   }
 
-  _debug(message) {
-    debug(`[${this._getStateName()}] ${message}`)
+  _debug(message, ...args) {
+    if (!debug.enabled) return
+    debug(`[%s] ${message}`, this._getStateName(), ...args)
   }
 
   _getStateName() {

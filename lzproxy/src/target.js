@@ -184,7 +184,7 @@ class Target {
   }
 
   async _start() {
-    this._debug(`target command ${this.config.command.join(' ')}`)
+    this._debug('target command %o', this.config.command)
     const [command, ...args] = this.config.command
 
     if (this.config.targetPort != null) {
@@ -192,7 +192,7 @@ class Target {
     } else {
       this.port = await getPort({ host: '::' })
     }
-    this._debug(`target port ${this.port}`)
+    this._debug('target port %d', this.port)
     this.readinessError = null
     this.target = spawn(command, args, {
       env: this._makeTargetEnv(),
@@ -277,8 +277,9 @@ class Target {
     this._handleReadinessSuccess()
   }
 
-  _debug(message) {
-    debug(`[${this._getStateName()}] ${message}`)
+  _debug(message, ...args) {
+    if (!debug.enabled) return
+    debug(`[%s] ${message}`, this._getStateName(), ...args)
   }
 
   _getStateName() {

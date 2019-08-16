@@ -3,6 +3,7 @@ const debug = require('debug')('lzproxy:target')
 const getPort = require('get-port')
 const readline = require('readline')
 
+const delay = require('./delay')
 const readiness = require('./readiness')
 
 //
@@ -280,10 +281,6 @@ class Target {
     const state = STATE_NAMES[this.state] || this.state
     return `lzproxy: ${this.config.name} (t-${state})`
   }
-}
-
-function delay(ms) {
-  return new Promise((resolve, reject) => setTimeout(resolve, ms))
 }
 
 module.exports = Target

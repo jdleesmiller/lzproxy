@@ -18,6 +18,7 @@ function normalize(configData) {
     command: ['npm', 'start'],
     environment: {},
     host: '127.0.0.1',
+    idleTimeoutMs: null,
     port: parseInt(process.env.PORT, 10) || 0,
     name: process.env.PORT || '',
     readinessMaxTries: 20,

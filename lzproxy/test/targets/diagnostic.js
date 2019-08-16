@@ -9,7 +9,7 @@ const port = parseInt(process.env.PORT, 10)
 app.get('/status', (req, res) => res.sendStatus(204))
 
 app.get('/', (req, res) => {
-  res.json({ port, env: process.env })
+  res.json({ port, pid: process.pid, env: process.env })
 })
 
 app.post('/stop', (req, res) => {

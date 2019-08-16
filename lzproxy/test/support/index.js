@@ -27,6 +27,7 @@ before(async function() {
   this.testUrl = `http://localhost:${testPort}`
 
   const targetDefaultDefaultOptions = {
+    idleTimeoutMs: 30000, // just set for coverage; it should not idle out
     readinessProbePath: '/status',
     readinessRetryDelayMs: 500,
     port: testPort

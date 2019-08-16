@@ -116,13 +116,16 @@ class Proxy {
     // Promise that resolves when the target is ready for requests.
     this._targetReady = null
 
+    // Timer ID for idling out the target, if enabled.
+    this._idleTimeout = null
+
     this.server = http.createServer(this._handleProxyRequest.bind(this))
     this.server.on('error', this._handleServerError.bind(this))
     this.server.listen(config.port, this._handleServerListening.bind(this))
   }
 
   stop() {
-    debug('stopping')
+    this._debug('stopping')
     switch (this.state) {
       case STATE_STARTING:
       case STATE_UP:
@@ -150,7 +153,7 @@ class Proxy {
   }
 
   _handleServerListening() {
-    debug('_handleServerListening')
+    this._debug('_handleServerListening')
     switch (this.state) {
       case STATE_STARTING:
         this.state = STATE_UP
@@ -187,6 +190,7 @@ class Proxy {
         throw new Error(`${this}: proxy server closed unexpectedly`)
       case STATE_SHUTTING_DOWN:
         this.state = STATE_SHUT_DOWN
+        this._clearIdleTimer()
         return
       default:
         throw new Error(`${this}: bad state`)
@@ -194,8 +198,9 @@ class Proxy {
   }
 
   async _handleProxyRequest(req, res) {
-    debug('_handleProxyRequest')
+    this._debug('_handleProxyRequest')
     if (this._fakeReadinessProbe(req, res)) return
+    this._updateIdleTimer()
     try {
       switch (this.state) {
         case STATE_STARTING:
@@ -250,6 +255,43 @@ class Proxy {
     return true
   }
 
+  _updateIdleTimer() {
+    if (this.config.idleTimeoutMs == null) return
+    this._clearIdleTimer()
+    this._idleTimeout = setTimeout(
+      this._idleOut.bind(this),
+      this.config.idleTimeoutMs
+    )
+  }
+
+  _clearIdleTimer() {
+    if (!this._idleTimeout) return
+    clearTimeout(this._idleTimeout)
+    this._idleTimeout = null
+  }
+
+  _idleOut() {
+    this._debug(`_idleOut`)
+    this._idleTimeout = null
+    switch (this.state) {
+      case STATE_STARTING:
+      case STATE_UP:
+      case STATE_TARGET_STARTING: // give it a chance to start
+      case STATE_TARGET_STOPPING:
+      case STATE_TARGET_STOPPING_FOR_RESTART: // assume restarting for a reason
+      case STATE_TARGET_STOPPING_FOR_SHUTDOWN:
+      case STATE_SHUTTING_DOWN:
+      case STATE_SHUT_DOWN:
+        return // ignore
+      case STATE_TARGET_UP:
+        this.state = STATE_TARGET_STOPPING
+        this.target.stop()
+        return
+      default:
+        throw new Error(`${this}: bad state`)
+    }
+  }
+
   _startTarget() {
     if (this._targetReady) return
     this._targetReady = new Promise((resolve, reject) => {
@@ -281,7 +323,7 @@ class Proxy {
   }
 
   _handleTargetExit({ error, code, signal }) {
-    debug('_handleTargetExit')
+    this._debug('_handleTargetExit')
     if (error) console.error(error)
     switch (this.state) {
       case STATE_TARGET_STARTING:
@@ -322,9 +364,16 @@ class Proxy {
     this.server.close(this._handleServerClosed.bind(this))
   }
 
+  _getStateName() {
+    return STATE_NAMES[this.state] || this.state
+  }
+
+  _debug(message) {
+    debug(`[${this._getStateName()}] ${message}`)
+  }
+
   toString() {
-    const state = STATE_NAMES[this.state] || this.state
-    return `lzproxy ${this.config.name} (${state})`
+    return `lzproxy ${this.config.name} (${this._getStateName()})`
   }
 }
 

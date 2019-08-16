@@ -2,7 +2,11 @@ const assert = require('assert')
 const getPort = require('get-port')
 const fetch = require('node-fetch')
 
+const delay = require('../src/delay')
+
 describe('lzproxy Proxy', function() {
+  this.timeout(10000)
+
   it('starts and stops cleanly without any requests', async function() {
     const proxy = this.startProxyWithDiagnosticTarget()
     await this.stopAndWait(proxy)
@@ -51,8 +55,39 @@ describe('lzproxy Proxy', function() {
       readinessMaxTries: 20 // make sure we time out if the target starts
     })
 
-    const response = await fetch(new URL('/status', this.testUrl))
-    assert(response.ok)
-    await this.stopAndWait(proxy)
+    try {
+      const response = await fetch(new URL('/status', this.testUrl))
+      assert(response.ok)
+    } finally {
+      await this.stopAndWait(proxy)
+    }
+  })
+
+  it('idles out after a period of inactivity', async function() {
+    const proxy = this.startProxyWithOptions({
+      ...this.targetDefaultOptions.diagnostic,
+      idleTimeoutMs: 1000 // make sure we time out if the target starts
+    })
+
+    try {
+      let response = await fetch(this.testUrl)
+      assert(response.ok)
+      let body = await response.json()
+      const originalPid = body.pid
+
+      await delay(2000)
+
+      response = await fetch(this.testUrl)
+      assert(response.ok)
+      body = await response.json()
+      const newPid = body.pid
+
+      // Here we assume the OS does not recycle pids extremely quickly.
+      assert.notStrictEqual(originalPid, newPid)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      await this.stopAndWait(proxy)
+    }
   })
 })

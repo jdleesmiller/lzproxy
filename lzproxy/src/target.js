@@ -64,7 +64,7 @@ class Target {
   }
 
   start() {
-    debug('start')
+    this._debug('start')
     switch (this.state) {
       case STATE_IDLE:
         this.state = STATE_STARTING
@@ -83,7 +83,7 @@ class Target {
   }
 
   stop() {
-    debug('stop')
+    this._debug('stop')
     switch (this.state) {
       case STATE_IDLE:
       case STATE_STOPPING:
@@ -102,7 +102,7 @@ class Target {
   }
 
   _handleTargetClose(code, signal) {
-    debug('_handleTargetClose')
+    this._debug('_handleTargetClose')
     switch (this.state) {
       case STATE_IDLE:
         throw new Error(`${this}: unexpected target close ${code} / ${signal}`)
@@ -120,7 +120,7 @@ class Target {
   }
 
   _handleTargetError(error) {
-    debug('_handleTargetError')
+    this._debug('_handleTargetError')
     switch (this.state) {
       case STATE_IDLE:
         throw new Error(`${this}: unexpected target error ${error}`)
@@ -148,7 +148,7 @@ class Target {
   }
 
   _handleReadinessSuccess() {
-    debug('_handleReadinessSuccess')
+    this._debug('_handleReadinessSuccess')
     switch (this.state) {
       case STATE_IDLE:
       case STATE_UP:
@@ -166,7 +166,7 @@ class Target {
   }
 
   _handleReadinessFailure() {
-    debug('_handleReadinessFailure')
+    this._debug('_handleReadinessFailure')
     switch (this.state) {
       case STATE_IDLE:
       case STATE_UP:
@@ -184,7 +184,7 @@ class Target {
   }
 
   async _start() {
-    debug(`target command ${this.config.command.join(' ')}`)
+    this._debug(`target command ${this.config.command.join(' ')}`)
     const [command, ...args] = this.config.command
 
     if (this.config.targetPort != null) {
@@ -192,7 +192,7 @@ class Target {
     } else {
       this.port = await getPort({ host: '::' })
     }
-    debug(`target port ${this.port}`)
+    this._debug(`target port ${this.port}`)
     this.readinessError = null
     this.target = spawn(command, args, {
       env: this._makeTargetEnv(),
@@ -216,12 +216,12 @@ class Target {
 
     let errored = false // one or both of 'error' and 'close' can fire
     this.target.on('close', (code, signal) => {
-      debug('target close')
+      this._debug('target close')
       if (!errored) this._handleTargetClose(code, signal)
     })
 
     this.target.on('error', error => {
-      debug('target error')
+      this._debug('target error')
       errored = true
       this._handleTargetError(error)
     })
@@ -236,7 +236,7 @@ class Target {
   }
 
   _stop() {
-    debug('_stop')
+    this._debug('_stop')
     this.target.kill(this.config.targetTerminationSignal)
     this.port = null
     this.target = null
@@ -277,9 +277,16 @@ class Target {
     this._handleReadinessSuccess()
   }
 
+  _debug(message) {
+    debug(`[${this._getStateName()}] ${message}`)
+  }
+
+  _getStateName() {
+    return STATE_NAMES[this.state] || this.state
+  }
+
   toString() {
-    const state = STATE_NAMES[this.state] || this.state
-    return `lzproxy: ${this.config.name} (t-${state})`
+    return `lzproxy: ${this.config.name} [${this._getStateName()}]`
   }
 }
 

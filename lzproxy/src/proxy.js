@@ -364,12 +364,12 @@ class Proxy {
     this.server.close(this._handleServerClosed.bind(this))
   }
 
-  _getStateName() {
-    return STATE_NAMES[this.state] || this.state
-  }
-
   _debug(message) {
     debug(`[${this._getStateName()}] ${message}`)
+  }
+
+  _getStateName() {
+    return STATE_NAMES[this.state] || this.state
   }
 
   toString() {

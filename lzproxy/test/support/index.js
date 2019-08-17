@@ -14,10 +14,12 @@ function getTargetPath(targetName) {
 
 const targetPaths = {
   crash: getTargetPath('crash.js'),
+  crashOnRequest: getTargetPath('crash-on-request.js'),
   crashSlowly: getTargetPath('crash-slowly.js'),
   diagnostic: getTargetPath('diagnostic.js'),
   hang: getTargetPath('hang.js'),
-  neverReady: getTargetPath('never-ready.js')
+  neverReady: getTargetPath('never-ready.js'),
+  slowRequest: getTargetPath('slow-request.js')
 }
 
 before(async function() {
@@ -37,6 +39,10 @@ before(async function() {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.crash]
     },
+    crashOnRequest: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.crashOnRequest]
+    },
     crashSlowly: {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.crashSlowly]
@@ -55,6 +61,10 @@ before(async function() {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.neverReady],
       readinessMaxTries: 2
+    },
+    slowRequest: {
+      ...targetDefaultDefaultOptions,
+      command: ['node', targetPaths.slowRequest]
     }
   }
 
@@ -88,19 +98,21 @@ before(async function() {
   function startProxies(config) {
     const stdout = []
     const stderr = []
+    const log = []
     const proxies = lzproxy.start(
       normalizeConfig(config),
       line => stdout.push(line),
-      line => stderr.push(line)
+      line => stderr.push(line),
+      line => log.push(line)
     )
-    return { proxies, stdout, stderr }
+    return { proxies, stdout, stderr, log }
   }
   this.startProxies = startProxies
 
   function startProxy(config) {
-    const { proxies } = startProxies(config)
+    const { proxies, stdout, stderr, log } = startProxies(config)
     assert.strictEqual(proxies.length, 1)
-    return proxies[0]
+    return { proxy: proxies[0], stdout, stderr, log }
   }
   this.startProxy = startProxy
 
@@ -118,8 +130,10 @@ before(async function() {
     proxy.stop()
     return new Promise((resolve, reject) => {
       const interval = setInterval(() => {
-        if (proxy.isStopped()) resolve()
-        clearInterval(interval)
+        if (proxy.isStopped()) {
+          clearInterval(interval)
+          resolve()
+        }
       }, 100)
     })
   }

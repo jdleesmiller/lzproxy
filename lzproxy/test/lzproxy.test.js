@@ -8,12 +8,12 @@ describe('lzproxy Proxy', function() {
   this.timeout(10000)
 
   it('starts and stops cleanly without any requests', async function() {
-    const proxy = this.startProxyWithDiagnosticTarget()
+    const { proxy } = this.startProxyWithDiagnosticTarget()
     await this.stopAndWait(proxy)
   })
 
   it('starts a single proxy and handles a request', async function() {
-    const proxy = this.startProxyWithDiagnosticTarget()
+    const { proxy } = this.startProxyWithDiagnosticTarget()
     try {
       const response = await fetch(this.testUrl)
       assert(response.ok)
@@ -50,7 +50,7 @@ describe('lzproxy Proxy', function() {
   })
 
   it('responds to readiness probe without starting target', async function() {
-    const proxy = this.startProxyWithOptions({
+    const { proxy } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.neverReady,
       readinessMaxTries: 20 // make sure we time out if the target starts
     })
@@ -64,7 +64,7 @@ describe('lzproxy Proxy', function() {
   })
 
   it('idles out after a period of inactivity', async function() {
-    const proxy = this.startProxyWithOptions({
+    const { proxy } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.diagnostic,
       idleTimeoutMs: 1000 // make sure we time out if the target starts
     })
@@ -84,8 +84,50 @@ describe('lzproxy Proxy', function() {
 
       // Here we assume the OS does not recycle pids extremely quickly.
       assert.notStrictEqual(originalPid, newPid)
+    } finally {
+      await this.stopAndWait(proxy)
+    }
+  })
+
+  it('handles a crashing request', async function() {
+    const { proxy, log } = this.startProxyWithOptions(
+      this.targetDefaultOptions.crashOnRequest
+    )
+    try {
+      const response = await fetch(this.testUrl)
+      assert(!response.ok)
+      assert.strictEqual(response.status, 502) // Bad Gateway
+
+      assert.strictEqual(log.length, 1)
+      assert(/ECONNRESET/.test(log[0]))
+      assert(/on GET \//.test(log[0]))
+    } finally {
+      await this.stopAndWait(proxy)
+    }
+  })
+
+  it('handles a client hangup', async function() {
+    // Setting the incoming timeout shorter than the request duration is the
+    // only way I've found to trigger http-proxy's econnreset event, but I don't
+    // think that's how these usually arise 'in the wild'.
+    const { proxy, log } = this.startProxyWithOptions({
+      ...this.targetDefaultOptions.slowRequest,
+      proxyIncomingTimeoutMs: 500
+    })
+    try {
+      await fetch(this.testUrl)
+      assert(false)
     } catch (error) {
-      console.error(error)
+      assert.strictEqual(error.code, 'ECONNRESET')
+
+      // It takes a few ticks for the log message to land.
+      for (;;) {
+        if (log.length > 0) break
+        await delay(100)
+      }
+
+      assert.strictEqual(log.length, 1)
+      assert(/warning: client ECONNRESET/.test(log[0]))
     } finally {
       await this.stopAndWait(proxy)
     }

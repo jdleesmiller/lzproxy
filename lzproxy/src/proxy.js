@@ -87,9 +87,10 @@ const STATE_SHUTTING_DOWN = 7
 const STATE_SHUT_DOWN = 8
 
 class Proxy {
-  constructor(config, onTargetStdout, onTargetStderr) {
+  constructor(config, onTargetStdout, onTargetStderr, log) {
     this.config = config
     this.state = STATE_STARTING
+    this.log = log || (message => console.error(message))
 
     this.target = new Target(
       config,
@@ -99,12 +100,22 @@ class Proxy {
       onTargetStderr
     )
 
-    this.proxy = httpProxy.createProxyServer({})
+    this.proxy = httpProxy.createProxyServer({
+      proxyTimeout: this.config.proxyOutgoingTimeoutMs,
+      timeout: this.config.proxyIncomingTimeoutMs
+    })
     this.proxy.on('error', (err, req, res, target) => {
-      console.log('proxy err')
-      console.log(err)
-      res.writeHead(500) // TODO: 503?
+      this.log(
+        `${this}: ${err.code} ${err.message} on ${req.method} ${req.url}`
+      )
+      res.writeHead(502)
       res.end()
+    })
+    this.proxy.on('econnreset', (err, req, res, target) => {
+      // This is probably not our fault; the client hung up.
+      this.log(
+        `${this}: warning: client ${err.code} on ${req.method} ${req.url}`
+      )
     })
 
     // Promise that resolves when the server is listening.
@@ -178,6 +189,7 @@ class Proxy {
   }
 
   _handleServerClosed() {
+    this._debug('_handleServerClosed')
     switch (this.state) {
       case STATE_STARTING:
       case STATE_UP:
@@ -238,7 +250,7 @@ class Proxy {
           throw new Error(`${this}: bad state`)
       }
     } catch (error) {
-      console.error(error)
+      this.log(error)
       res.writeHead(503)
       res.end()
     }
@@ -324,7 +336,7 @@ class Proxy {
 
   _handleTargetExit({ error, code, signal }) {
     this._debug('_handleTargetExit')
-    if (error) console.error(error)
+    if (error) this.log(error)
     switch (this.state) {
       case STATE_TARGET_STARTING:
         if (error) {

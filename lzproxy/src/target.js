@@ -190,7 +190,7 @@ class Target {
     if (this.config.targetPort != null) {
       this.port = this.config.targetPort
     } else {
-      this.port = await getPort({ host: '::' })
+      this.port = await getPort({ host: this.config.host })
     }
     this._debug('target port %d', this.port)
     this.readinessError = null

@@ -17,7 +17,7 @@ function normalize(configData) {
   const defaultOptions = {
     command: ['npm', 'start'],
     environment: {},
-    host: '127.0.0.1',
+    host: '::',
     idleTimeoutMs: null,
     proxyIncomingTimeoutMs: null,
     proxyOutgoingTimeoutMs: null,

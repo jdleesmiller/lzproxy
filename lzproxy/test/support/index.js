@@ -20,7 +20,6 @@ const targetPaths = {
   neverReady: getTargetPath('never-ready.js')
 }
 
-// eslint-disable-next-line mocha/no-top-level-hooks,mocha/no-hooks-for-single-case
 before(async function() {
   const testPort = await getPort()
   this.testPort = testPort

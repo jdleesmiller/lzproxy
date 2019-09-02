@@ -279,7 +279,7 @@ class Target {
 
   _debug(message, ...args) {
     if (!debug.enabled) return
-    debug(`[%s] ${message}`, this._getStateName(), ...args)
+    debug(`%s [%s] ${message}`, this.config.name, this._getStateName(), ...args)
   }
 
   _getStateName() {

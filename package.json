@@ -1,6 +1,6 @@
 {
   "name": "lzproxy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lazy web proxy that starts the target app when it receives the first request.",
   "main": "index.js",
   "dependencies": {

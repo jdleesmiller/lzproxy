@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
 const lzproxy = require('..')
-const argv = require('../src/cli')
+const cli = require('../src/cli')
 const config = require('../src/config')
 
-const proxyConfigs = config.read(argv.config)
+const argv = cli(require('yargs')).argv
+const proxyConfigs = config.createFromCommandLineArguments(argv)
+
 const proxies = lzproxy.start(proxyConfigs)
 
 process.on('SIGINT', stopProxies)

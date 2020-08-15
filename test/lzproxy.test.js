@@ -28,10 +28,8 @@ describe('lzproxy Proxy', function () {
   it('starts two proxies and handles requests', async function () {
     const otherPort = await getPort()
     const { proxies } = this.startProxies({
-      lzproxy: {
-        options: this.targetDefaultOptions.diagnostic,
-        proxies: [{}, { port: otherPort }],
-      },
+      options: this.targetDefaultOptions.diagnostic,
+      proxies: [{}, { port: otherPort }],
     })
     try {
       let response = await fetch(this.testUrl)
@@ -52,7 +50,12 @@ describe('lzproxy Proxy', function () {
   it('responds to readiness probe without starting target', async function () {
     const { proxy } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.neverReady,
-      readinessMaxTries: 20, // make sure we time out if the target starts
+      probes: [
+        {
+          ...this.targetDefaultOptions.neverReady.probes[0],
+          maxTries: 30, // make sure we time out if the target starts
+        },
+      ],
     })
 
     try {

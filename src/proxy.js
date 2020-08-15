@@ -257,14 +257,14 @@ class Proxy {
   }
 
   _fakeReadinessProbe(req, res) {
-    if (!this.config.readinessProbePathRegExp.test(req.url)) return false
-
-    if (this.config.readinessProbeResponseBody != null) {
-      res.write(this.config.readinessProbeResponseBody)
+    for (const probe of this.config.probes) {
+      if (!probe.pathRegExp.test(req.url)) continue
+      if (probe.responseBody != null) res.write(probe.responseBody)
+      res.writeHead(probe.responseStatusCode)
+      res.end()
+      return true
     }
-    res.writeHead(this.config.readinessProbeResponseStatusCode)
-    res.end()
-    return true
+    return false
   }
 
   _updateIdleTimer() {

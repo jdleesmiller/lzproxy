@@ -28,10 +28,13 @@ before(async function () {
   this.testPort = testPort
   this.testUrl = `http://localhost:${testPort}`
 
+  const defaultProbe = {
+    path: '/status',
+    retryDelayMs: 500,
+  }
   const targetDefaultDefaultOptions = {
     idleTimeoutMs: 30000, // just set for coverage; it should not idle out
-    readinessProbePath: '/status',
-    readinessRetryDelayMs: 500,
+    probes: [defaultProbe],
     port: testPort,
   }
 
@@ -55,13 +58,12 @@ before(async function () {
     hang: {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.hang],
-      readinessMaxTries: 2,
-      readinessTimeoutMs: 1000,
+      probes: [{ ...defaultProbe, maxTries: 2, timeoutMs: 1000 }],
     },
     neverReady: {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.neverReady],
-      readinessMaxTries: 2,
+      probes: [{ ...defaultProbe, maxTries: 2 }],
     },
     slowRequest: {
       ...targetDefaultDefaultOptions,
@@ -70,7 +72,7 @@ before(async function () {
   }
 
   function normalizeTargetOptions(options) {
-    return normalizeConfig({ lzproxy: { options } })[0]
+    return normalizeConfig({ options })[0]
   }
 
   function createTarget(options) {
@@ -118,7 +120,7 @@ before(async function () {
   this.startProxy = startProxy
 
   function startProxyWithOptions(options) {
-    return this.startProxy({ lzproxy: { options } })
+    return this.startProxy({ options })
   }
   this.startProxyWithOptions = startProxyWithOptions
 

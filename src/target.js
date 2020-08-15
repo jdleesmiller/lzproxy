@@ -225,7 +225,7 @@ class Target {
       this._handleTargetError(error)
     })
 
-    this._waitForTargetReadinessProbe()
+    this._waitForTargetReadinessProbes()
   }
 
   _makeTargetEnv() {
@@ -241,11 +241,18 @@ class Target {
     this.target = null
   }
 
-  async _waitForTargetReadinessProbe() {
-    const probeUrl = new URL(this.config.readinessProbePath, this.getUrl())
-    const maxTries = this.config.readinessMaxTries
-    const retryDelayMs = this.config.readinessRetryDelayMs
-    const timeoutMs = this.config.readinessTimeoutMs
+  async _waitForTargetReadinessProbes() {
+    await Promise.all(
+      this.config.probes.map((probe) =>
+        this._waitForTargetReadinessProbe(probe)
+      )
+    )
+    this._handleReadinessSuccess()
+  }
+
+  async _waitForTargetReadinessProbe(probe) {
+    const probeUrl = new URL(probe.path, this.getUrl())
+    const { maxTries, retryDelayMs, timeoutMs } = probe
 
     let tries = 0
     for (;;) {
@@ -272,8 +279,6 @@ class Target {
         }
       }
     }
-
-    this._handleReadinessSuccess()
   }
 
   _debug(message, ...args) {

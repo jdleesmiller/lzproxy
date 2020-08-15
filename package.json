@@ -1,26 +1,42 @@
 {
-  "name": "lzproxy-dev",
-  "version": "1.0.0",
-  "description": "Development tooling for lzproxy.",
-  "dependencies": {},
+  "name": "lzproxy",
+  "version": "0.0.1",
+  "description": "Lazy web proxy that starts the target app when it receives the first request.",
+  "main": "index.js",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "get-port": "^5.0.0",
+    "http-proxy": "^1.17.0",
+    "node-fetch": "^2.6.0",
+    "yargs": "^13.2.4"
+  },
   "devDependencies": {
-    "eslint": "^6.0.1",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-config-standard": "^13.0.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-mocha": "^6.0.0",
-    "eslint-plugin-node": "^9.1.0",
-    "eslint-plugin-prettier": "^3.1.0",
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-mocha": "^8.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.14.2",
-    "eslint-plugin-standard": "^4.0.0",
-    "prettier": "^1.18.2"
+    "eslint-plugin-standard": "^4.0.1",
+    "express": "^4.17.1",
+    "mocha": "^6.1.4",
+    "prettier": "^2.0.5"
   },
+  "bin": "bin/lzproxy",
   "scripts": {
-    "lint": "eslint ."
+    "test": "mocha --file test/support"
   },
-  "keywords": [],
+  "keywords": [
+    "lazy",
+    "proxy",
+    "lazy proxy",
+    "startup time",
+    "microservices",
+    "testing"
+  ],
   "author": "John Lees-Miller",
   "license": "ISC",
-  "private": true
+  "repository": "https://github.com/jdleesmiller/lzproxy"
 }

@@ -3,6 +3,7 @@ const getPort = require('get-port')
 const path = require('path')
 
 const lzproxy = require('../..')
+const delay = require('../../src/delay')
 const Target = require('../../src/target')
 const normalizeConfig = require('../../src/config').normalize
 
@@ -128,14 +129,10 @@ before(async function () {
 
   async function stopAndWait(proxy) {
     proxy.stop()
-    return new Promise((resolve, reject) => {
-      const interval = setInterval(() => {
-        if (proxy.isStopped()) {
-          clearInterval(interval)
-          resolve()
-        }
-      }, 100)
-    })
+    while (true) {
+      if (proxy.isStopped()) return
+      await delay(100)
+    }
   }
   this.stopAndWait = stopAndWait
 })

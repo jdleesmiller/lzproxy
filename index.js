@@ -12,7 +12,7 @@ const Target = require('./src/target')
  */
 function start(proxyConfigs, onTargetStdout, onTargetStderr, log) {
   return proxyConfigs.map(
-    proxyConfig => new Proxy(proxyConfig, onTargetStdout, onTargetStderr, log)
+    (proxyConfig) => new Proxy(proxyConfig, onTargetStdout, onTargetStderr, log)
   )
 }
 

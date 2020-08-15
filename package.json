@@ -26,6 +26,7 @@
   },
   "bin": "bin/lzproxy",
   "scripts": {
+    "lint": "eslint .",
     "test": "mocha --file test/support"
   },
   "keywords": [

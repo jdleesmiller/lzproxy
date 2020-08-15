@@ -14,6 +14,6 @@ app.get('/', (req, res) => {
 
 server.listen(port)
 
-process.on('SIGTERM', function() {
+process.on('SIGTERM', function () {
   server.close()
 })

@@ -19,10 +19,10 @@ const targetPaths = {
   diagnostic: getTargetPath('diagnostic.js'),
   hang: getTargetPath('hang.js'),
   neverReady: getTargetPath('never-ready.js'),
-  slowRequest: getTargetPath('slow-request.js')
+  slowRequest: getTargetPath('slow-request.js'),
 }
 
-before(async function() {
+before(async function () {
   const testPort = await getPort()
   this.testPort = testPort
   this.testUrl = `http://localhost:${testPort}`
@@ -31,41 +31,41 @@ before(async function() {
     idleTimeoutMs: 30000, // just set for coverage; it should not idle out
     readinessProbePath: '/status',
     readinessRetryDelayMs: 500,
-    port: testPort
+    port: testPort,
   }
 
   this.targetDefaultOptions = {
     crash: {
       ...targetDefaultDefaultOptions,
-      command: ['node', targetPaths.crash]
+      command: ['node', targetPaths.crash],
     },
     crashOnRequest: {
       ...targetDefaultDefaultOptions,
-      command: ['node', targetPaths.crashOnRequest]
+      command: ['node', targetPaths.crashOnRequest],
     },
     crashSlowly: {
       ...targetDefaultDefaultOptions,
-      command: ['node', targetPaths.crashSlowly]
+      command: ['node', targetPaths.crashSlowly],
     },
     diagnostic: {
       ...targetDefaultDefaultOptions,
-      command: ['node', targetPaths.diagnostic]
+      command: ['node', targetPaths.diagnostic],
     },
     hang: {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.hang],
       readinessMaxTries: 2,
-      readinessTimeoutMs: 1000
+      readinessTimeoutMs: 1000,
     },
     neverReady: {
       ...targetDefaultDefaultOptions,
       command: ['node', targetPaths.neverReady],
-      readinessMaxTries: 2
+      readinessMaxTries: 2,
     },
     slowRequest: {
       ...targetDefaultDefaultOptions,
-      command: ['node', targetPaths.slowRequest]
-    }
+      command: ['node', targetPaths.slowRequest],
+    },
   }
 
   function normalizeTargetOptions(options) {
@@ -101,9 +101,9 @@ before(async function() {
     const log = []
     const proxies = lzproxy.start(
       normalizeConfig(config),
-      line => stdout.push(line),
-      line => stderr.push(line),
-      line => log.push(line)
+      (line) => stdout.push(line),
+      (line) => stderr.push(line),
+      (line) => log.push(line)
     )
     return { proxies, stdout, stderr, log }
   }

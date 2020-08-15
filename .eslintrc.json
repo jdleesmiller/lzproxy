@@ -1,6 +1,5 @@
 {
   "env": {
-    "browser": true,
     "commonjs": true,
     "es6": true,
     "mocha": true
@@ -9,7 +8,6 @@
   "extends": [
     "standard",
     "plugin:prettier/recommended",
-    "plugin:react/recommended",
     "plugin:mocha/recommended"
   ],
   "globals": {
@@ -20,14 +18,7 @@
     "ecmaVersion": 2018
   },
   "rules": {
-    "mocha/no-setup-in-describe": "off",
     "mocha/no-hooks-for-single-case": "off",
-    "mocha/no-top-level-hooks": "off",
-    "mocha/no-sibling-hooks": "off"
-  },
-  "settings": {
-    "react": {
-      "version": "16.8"
-    }
+    "mocha/no-top-level-hooks": "off"
   }
 }

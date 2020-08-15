@@ -4,15 +4,15 @@ const fetch = require('node-fetch')
 
 const delay = require('../src/delay')
 
-describe('lzproxy Proxy', function() {
+describe('lzproxy Proxy', function () {
   this.timeout(10000)
 
-  it('starts and stops cleanly without any requests', async function() {
+  it('starts and stops cleanly without any requests', async function () {
     const { proxy } = this.startProxyWithDiagnosticTarget()
     await this.stopAndWait(proxy)
   })
 
-  it('starts a single proxy and handles a request', async function() {
+  it('starts a single proxy and handles a request', async function () {
     const { proxy } = this.startProxyWithDiagnosticTarget()
     try {
       const response = await fetch(this.testUrl)
@@ -25,13 +25,13 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('starts two proxies and handles requests', async function() {
+  it('starts two proxies and handles requests', async function () {
     const otherPort = await getPort()
     const { proxies } = this.startProxies({
       lzproxy: {
         options: this.targetDefaultOptions.diagnostic,
-        proxies: [{}, { port: otherPort }]
-      }
+        proxies: [{}, { port: otherPort }],
+      },
     })
     try {
       let response = await fetch(this.testUrl)
@@ -49,10 +49,10 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('responds to readiness probe without starting target', async function() {
+  it('responds to readiness probe without starting target', async function () {
     const { proxy } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.neverReady,
-      readinessMaxTries: 20 // make sure we time out if the target starts
+      readinessMaxTries: 20, // make sure we time out if the target starts
     })
 
     try {
@@ -63,10 +63,10 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('idles out after a period of inactivity', async function() {
+  it('idles out after a period of inactivity', async function () {
     const { proxy } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.diagnostic,
-      idleTimeoutMs: 1000 // make sure we time out if the target starts
+      idleTimeoutMs: 1000, // make sure we time out if the target starts
     })
 
     try {
@@ -89,7 +89,7 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('handles a crashing request', async function() {
+  it('handles a crashing request', async function () {
     const { proxy, log } = this.startProxyWithOptions(
       this.targetDefaultOptions.crashOnRequest
     )
@@ -106,13 +106,13 @@ describe('lzproxy Proxy', function() {
     }
   })
 
-  it('handles a client hangup', async function() {
+  it('handles a client hangup', async function () {
     // Setting the incoming timeout shorter than the request duration is the
     // only way I've found to trigger http-proxy's econnreset event, but I don't
     // think that's how these usually arise 'in the wild'.
     const { proxy, log } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.slowRequest,
-      proxyIncomingTimeoutMs: 500
+      proxyIncomingTimeoutMs: 500,
     })
     try {
       await fetch(this.testUrl)

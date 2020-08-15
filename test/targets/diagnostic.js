@@ -22,6 +22,6 @@ app.post('/stop', (req, res) => {
 
 server.listen(port)
 
-process.on('SIGTERM', function() {
+process.on('SIGTERM', function () {
   server.close()
 })

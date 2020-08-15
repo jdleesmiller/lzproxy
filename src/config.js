@@ -32,7 +32,7 @@ function normalize(configData) {
     readinessTimeoutMs: 2000,
     targetPort: null,
     targetPortEnvironmentVariable: 'PORT',
-    targetTerminationSignal: 'SIGTERM'
+    targetTerminationSignal: 'SIGTERM',
   }
 
   config.options = { ...defaultOptions, ...config.options }
@@ -42,9 +42,9 @@ function normalize(configData) {
     config.proxies = [{}]
   }
 
-  return config.proxies.map(proxyConfig => ({
+  return config.proxies.map((proxyConfig) => ({
     ...config.options,
-    ...proxyConfig
+    ...proxyConfig,
   }))
 }
 

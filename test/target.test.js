@@ -2,12 +2,12 @@ const assert = require('assert')
 const getPort = require('get-port')
 const fetch = require('node-fetch')
 
-describe('lzproxy Target', function() {
+describe('lzproxy Target', function () {
   this.timeout(15000)
 
-  describe('with ready diagnostic target', function() {
+  describe('with ready diagnostic target', function () {
     let target, events
-    beforeEach(async function() {
+    beforeEach(async function () {
       ;({ target, events } = this.createTarget(
         this.targetDefaultOptions.diagnostic
       ))
@@ -16,7 +16,7 @@ describe('lzproxy Target', function() {
       assert(!result) // ready should finish first
     })
 
-    it('starts a target and stops it with sigterm', async function() {
+    it('starts a target and stops it with sigterm', async function () {
       target.stop()
 
       const { code } = await events.shift()
@@ -25,7 +25,7 @@ describe('lzproxy Target', function() {
       assert(!target.target)
     })
 
-    it('starts a target that exits cleanly', async function() {
+    it('starts a target that exits cleanly', async function () {
       const stopUrl = new URL('/stop', target.getUrl())
       const response = await fetch(stopUrl, { method: 'POST' })
       assert(response.ok)
@@ -36,7 +36,7 @@ describe('lzproxy Target', function() {
       assert(!target.target)
     })
 
-    it('starts a target that exits nonzero', async function() {
+    it('starts a target that exits nonzero', async function () {
       const stopUrl = new URL('/stop?code=1', target.getUrl())
       const response = await fetch(stopUrl, { method: 'POST' })
       assert(response.ok)
@@ -47,7 +47,7 @@ describe('lzproxy Target', function() {
       assert(!target.target)
     })
 
-    it('restarts and a target that stops', async function() {
+    it('restarts and a target that stops', async function () {
       let stopUrl = new URL('/stop', target.getUrl())
       let response = await fetch(stopUrl, { method: 'POST' })
       assert(response.ok)
@@ -73,14 +73,14 @@ describe('lzproxy Target', function() {
     })
   })
 
-  it('handles stopping when idle', async function() {
+  it('handles stopping when idle', async function () {
     const { target } = this.createTarget(this.targetDefaultOptions.crash)
     assert(target.isIdle())
     target.stop()
     assert(target.isIdle())
   })
 
-  it('handles a target that crashes immediately', async function() {
+  it('handles a target that crashes immediately', async function () {
     const { target, events, stdout, stderr } = this.createTarget(
       this.targetDefaultOptions.crash
     )
@@ -88,12 +88,12 @@ describe('lzproxy Target', function() {
     const { code } = await events.shift()
     assert.strictEqual(code, 1) // exit
     assert.strictEqual(stdout.length, 0)
-    assert(stderr.some(line => /I crash immediately/.test(line)))
+    assert(stderr.some((line) => /I crash immediately/.test(line)))
     assert(!target.port)
     assert(!target.target)
   })
 
-  it('handles a target that crashes slowly', async function() {
+  it('handles a target that crashes slowly', async function () {
     const { target, events, stdout, stderr } = this.createTarget(
       this.targetDefaultOptions.crashSlowly
     )
@@ -101,12 +101,12 @@ describe('lzproxy Target', function() {
     const { code } = await events.shift()
     assert.strictEqual(code, 1) // exit
     assert.strictEqual(stdout.length, 0)
-    assert(stderr.some(line => /I crash after 1s/.test(line)))
+    assert(stderr.some((line) => /I crash after 1s/.test(line)))
     assert(!target.port)
     assert(!target.target)
   })
 
-  it('handles a target that hangs on the health check', async function() {
+  it('handles a target that hangs on the health check', async function () {
     const { target, events } = this.createTarget(this.targetDefaultOptions.hang)
     target.start()
     const { error } = await events.shift()
@@ -118,7 +118,7 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
-  it('handles a target that never comes up', async function() {
+  it('handles a target that never comes up', async function () {
     const { target, events } = this.createTarget(
       this.targetDefaultOptions.neverReady
     )
@@ -132,12 +132,12 @@ describe('lzproxy Target', function() {
     assert(!target.target)
   })
 
-  it('sets the target environment variables', async function() {
+  it('sets the target environment variables', async function () {
     const { target, events } = this.createTarget({
       ...this.targetDefaultOptions.diagnostic,
       environment: {
-        TEST_LZPROXY_ENV_VAR: 'foo'
-      }
+        TEST_LZPROXY_ENV_VAR: 'foo',
+      },
     })
     target.start()
     const result = await events.shift()
@@ -154,11 +154,11 @@ describe('lzproxy Target', function() {
     assert.strictEqual(code, 0)
   })
 
-  it('allows the target port to be configured', async function() {
+  it('allows the target port to be configured', async function () {
     const targetPort = await getPort()
     const { target, events } = this.createTarget({
       ...this.targetDefaultOptions.diagnostic,
-      targetPort
+      targetPort,
     })
     target.start()
     const result = await events.shift()

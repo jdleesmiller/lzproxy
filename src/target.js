@@ -46,8 +46,8 @@ class Target {
     this.config = config
     this.onReady = onReady
     this.onExit = onExit
-    this.onStdout = onStdout || (line => console.log(line))
-    this.onStderr = onStderr || (line => console.error(line))
+    this.onStdout = onStdout || ((line) => console.log(line))
+    this.onStderr = onStderr || ((line) => console.error(line))
     this.state = STATE_IDLE
 
     this.port = null
@@ -110,8 +110,7 @@ class Target {
       case STATE_UP:
       case STATE_STOPPING:
       case STATE_RESTARTING:
-        const error = this.readinessError
-        this.onExit({ error, code, signal })
+        this.onExit({ error: this.readinessError, code, signal })
         this._restartOrIdle()
         return
       default:
@@ -197,20 +196,20 @@ class Target {
     this.target = spawn(command, args, {
       env: this._makeTargetEnv(),
       detached: true,
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['ignore', 'pipe', 'pipe'],
     })
 
     readline
       .createInterface({
         input: this.target.stdout,
-        terminal: false
+        terminal: false,
       })
       .on('line', this.onStdout)
 
     readline
       .createInterface({
         input: this.target.stderr,
-        terminal: false
+        terminal: false,
       })
       .on('line', this.onStderr)
 
@@ -220,7 +219,7 @@ class Target {
       if (!errored) this._handleTargetClose(code, signal)
     })
 
-    this.target.on('error', error => {
+    this.target.on('error', (error) => {
       this._debug('target error')
       errored = true
       this._handleTargetError(error)

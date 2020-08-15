@@ -73,7 +73,7 @@ const STATE_NAMES = [
   'target-stopping-for-restart',
   'target-stopping-for-shutdown',
   'shutting-down',
-  'shut-down'
+  'shut-down',
 ]
 
 const STATE_STARTING = 0
@@ -90,7 +90,7 @@ class Proxy {
   constructor(config, onTargetStdout, onTargetStderr, log) {
     this.config = config
     this.state = STATE_STARTING
-    this.log = log || (message => console.error(message))
+    this.log = log || ((message) => console.error(message))
 
     this.target = new Target(
       config,
@@ -102,7 +102,7 @@ class Proxy {
 
     this.proxy = httpProxy.createProxyServer({
       proxyTimeout: this.config.proxyOutgoingTimeoutMs,
-      timeout: this.config.proxyIncomingTimeoutMs
+      timeout: this.config.proxyIncomingTimeoutMs,
     })
     this.proxy.on('error', (err, req, res, target) => {
       this.log(
@@ -229,7 +229,7 @@ class Proxy {
           return
         case STATE_TARGET_UP:
           this.proxy.web(req, res, {
-            target: this.target.getUrl()
+            target: this.target.getUrl(),
           })
           return
         case STATE_TARGET_STOPPING:

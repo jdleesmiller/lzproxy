@@ -6,5 +6,5 @@ module.exports = require('yargs') //
   .option('config', {
     default: path.join(process.cwd(), 'package.json'),
     description: 'path to file with configuration',
-    requiresArg: true
+    requiresArg: true,
   }).argv

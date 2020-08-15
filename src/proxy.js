@@ -259,8 +259,8 @@ class Proxy {
   _fakeReadinessProbe(req, res) {
     for (const probe of this.config.probes) {
       if (!probe.pathRegExp.test(req.url)) continue
-      if (probe.responseBody != null) res.write(probe.responseBody)
       res.writeHead(probe.responseStatusCode)
+      if (probe.responseBody) res.write(probe.responseBody)
       res.end()
       return true
     }

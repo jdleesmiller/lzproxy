@@ -66,6 +66,27 @@ describe('lzproxy Proxy', function () {
     }
   })
 
+  it('responds to readiness probe with configured body', async function () {
+    const { proxy } = this.startProxyWithOptions({
+      ...this.targetDefaultOptions.neverReady,
+      probes: [
+        {
+          ...this.targetDefaultOptions.neverReady.probes[0],
+          responseBody: 'alive',
+        },
+      ],
+    })
+
+    try {
+      const response = await fetch(new URL('/status', this.testUrl))
+      assert(response.ok)
+      const body = await response.text()
+      assert.strictEqual('alive', body)
+    } finally {
+      await this.stopAndWait(proxy)
+    }
+  })
+
   it('idles out after a period of inactivity', async function () {
     const { proxy } = this.startProxyWithOptions({
       ...this.targetDefaultOptions.diagnostic,
